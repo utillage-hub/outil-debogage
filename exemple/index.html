@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Essai — outil de débogage</title>
+<style>
+  /* Appli fictive de démonstration : toutes les données sont inventées */
+  :root { --fond:#F2F4F7; --carte:#FFFFFF; --txt:#16202B; --doux:#5B6675; --acc:#3D6BE0; --ligne:#E1E6ED; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.45 "Segoe UI", system-ui, sans-serif; background: var(--fond); color: var(--txt); padding-bottom: calc(80px + env(safe-area-inset-bottom, 0)); }
+  header { position: sticky; top: 0; background: var(--fond); padding: calc(16px + env(safe-area-inset-top, 0)) 20px 8px; z-index: 2; border-bottom: 1px solid var(--ligne); }
+  .bandeau { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--acc); }
+  h1 { margin: 2px 0 0; font-size: 22px; }
+  .sous { color: var(--doux); margin: 2px 0 10px; }
+  nav { display: flex; gap: 6px; }
+  nav button { border: 0; padding: 8px 14px; border-radius: 20px; background: transparent; font: inherit; font-weight: 600; color: var(--doux); }
+  nav button[aria-selected=true] { background: var(--txt); color: #fff; }
+  main { padding: 16px 20px; display: grid; gap: 14px; max-width: 980px; margin: auto; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .kpi { background: var(--carte); border: 1px solid var(--ligne); border-radius: 16px; padding: 14px 16px; }
+  .kpi small { color: var(--doux); } .kpi b { display: block; font-size: 26px; font-variant-numeric: tabular-nums; }
+  .kpi .var { font-size: 12px; color: #1E7F4F; } .kpi .var.bas { color: #B3261E; }
+  .carte { background: var(--carte); border: 1px solid var(--ligne); border-radius: 16px; padding: 6px 0; }
+  .carte h2 { font-size: 16px; margin: 10px 16px; }
+  .ligne { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-top: 1px solid var(--ligne); }
+  .ligne .av { width: 36px; height: 36px; border-radius: 50%; background: #DCE5FA; display: grid; place-items: center; font-weight: 700; color: #2B4FA8; flex: none; }
+  .ligne .t { flex: 1; } .ligne .t small { display: block; color: #A3ACB8; } /* contraste volontairement faible, pour tester la pipette */
+  .puce { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 10px; background: #FFF0D6; color: #9A5B00; white-space: nowrap; }
+  .puce.ok { background: #E1F3E9; color: #1E7F4F; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn { border: 0; border-radius: 12px; padding: 10px 16px; font: inherit; font-weight: 600; background: var(--acc); color: #fff; user-select: none; }
+  .btn.sec { background: #E3E8F0; color: var(--txt); margin-left: 3px; } /* décalage volontaire, pour tester la mesure d'écart */
+  .barre-bas { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1px solid var(--ligne); display: flex; justify-content: space-around; padding: 10px 0 calc(14px + env(safe-area-inset-bottom, 0)); z-index: 3; }
+  .barre-bas a { color: var(--doux); text-decoration: none; font-size: 13px; font-weight: 600; }
+  .modale { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: grid; place-items: center; z-index: 5; }
+  .modale[hidden] { display: none; }
+  .modale > div { background: #fff; border-radius: 18px; padding: 20px; width: min(92vw, 420px); }
+  input { width: 100%; padding: 10px; border: 1px solid var(--ligne); border-radius: 10px; font: inherit; margin: 6px 0 12px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="bandeau">Appli de démonstration · données fictives</div>
+  <h1>Planning de l'équipe</h1>
+  <p class="sous">Bonjour Camille, voici les tâches de la semaine.</p>
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-o="taches">Tâches</button>
+    <button role="tab" aria-selected="false" data-o="equipe">Équipe</button>
+    <button role="tab" aria-selected="false" data-o="agenda">Agenda</button>
+  </nav>
+</header>
+<main>
+  <section class="kpis">
+    <div class="kpi"><small>Tâches ouvertes</small><b>23</b><span class="var">−4 vs semaine dernière</span></div>
+    <div class="kpi"><small>Terminées cette semaine</small><b>17</b><span class="var">+6 vs semaine dernière</span></div>
+    <div class="kpi"><small>Retard moyen</small><b>1,4 j</b><span class="var bas">+0,3 j</span></div>
+  </section>
+  <div class="actions">
+    <button class="btn" id="nouveau">+ Nouvelle tâche</button>
+    <button class="btn sec" id="trier">Trier par échéance</button>
+    <button class="btn sec" id="bug">Provoquer une erreur</button>
+  </div>
+  <section class="carte" id="liste"><h2>À faire bientôt</h2></section>
+</main>
+<nav class="barre-bas"><a href="#accueil">Accueil</a><a href="#taches">Tâches</a><a href="#reglages">Réglages</a></nav>
+<div class="modale" id="modale" hidden role="dialog" aria-modal="true"><div>
+  <h2>Nouvelle tâche</h2>
+  <label>Intitulé<input placeholder="Ex. : arroser les plantes"></label>
+  <label>Échéance<input placeholder="jj/mm"></label>
+  <div class="actions"><button class="btn sec" id="annuler">Annuler</button><button class="btn" id="creer">Créer</button></div>
+</div></div>
+
+<script>
+  // Données inventées pour la démonstration
+  const taches = [["Camille", "Préparer la réunion du lundi", "Lun. 9 h", "En cours"], ["Noé", "Ranger la salle de réunion", "Lun. 14 h", "À faire"], ["Inès", "Commander des stylos", "Mar.", "Fait"], ["Malo", "Mettre à jour le planning", "Mar.", "À faire"], ["Lina", "Relire la note de service", "Mer.", "En cours"], ["Sacha", "Arroser les plantes du bureau", "Jeu.", "Fait"], ["Jules", "Tester la nouvelle imprimante", "Jeu.", "À faire"], ["Rose", "Organiser le pique-nique", "Ven.", "À faire"]];
+  const html = taches.concat(taches).map(([n, t, q, s]) => `<div class="ligne"><span class="av">${n[0]}</span><span class="t">${t}<small>${n} · ${q}</small></span><span class="puce${s === "Fait" ? " ok" : ""}">${s}</span></div>`).join("");
+  document.getElementById("liste").insertAdjacentHTML("beforeend", html);
+  let onglet = "taches";
+  document.querySelectorAll("nav [role=tab]").forEach(b => b.onclick = () => { onglet = b.dataset.o; document.querySelectorAll("nav [role=tab]").forEach(x => x.setAttribute("aria-selected", String(x === b))); });
+  document.getElementById("nouveau").onclick = () => { document.getElementById("modale").hidden = false; };
+  document.getElementById("annuler").onclick = () => { document.getElementById("modale").hidden = true; };
+  document.getElementById("creer").onclick = () => { document.getElementById("modale").hidden = true; };
+  document.getElementById("trier").onclick = () => {};
+  document.getElementById("bug").onclick = () => { const tache = null; return tache.echeance; };
+</script>
+
+<!-- L'outil de débogage : une ligne pour l'inclure, un appel pour le régler -->
+<script src="../dist/debogage.js"></script>
+<script>
+  Debogage.init({
+    projet: "demo-planning",
+    version: "0.3",
+    bulle: true,
+    // nom de l'écran en cours, joint à chaque note
+    ecran: () => {
+      const m = document.getElementById("modale");
+      return "Planning › " + onglet + (m.hidden ? "" : " › fenêtre Nouvelle tâche");
+    },
+    // instantané de l'état de l'appli, joint à chaque note
+    etat: () => ({ onglet, tachesAffichees: taches.length * 2, modaleOuverte: !document.getElementById("modale").hidden })
+  });
+</script>
+</body>
+</html>

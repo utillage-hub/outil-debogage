@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Débogage — tous les projets</title>
+<style>
+  :root {
+    --fond: #F3F3F1; --carte: #FFFFFF; --txt: #17191C; --doux: #5D636B; --pale: #8A9098; --trait: #E2E2DE;
+    --graphite: #1D2024; --acc: #FFB224; --acc-enc: #1B1400;
+    --todo: #9A5B00; --todo-fond: #FFF1D6; --ok: #17733F; --ok-fond: #E2F4E9; --re: #B42318; --re-fond: #FDE8E6;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--fond); color: var(--txt); font: 15px/1.45 var(--sans); -webkit-font-smoothing: antialiased; }
+  button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #C77D00; outline-offset: 2px; }
+  .mono { font-family: var(--mono); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* En-tête graphite, comme l'outil */
+  .haut { background: var(--graphite); color: #EEF0F2; padding: 18px clamp(16px, 4vw, 40px) 0; }
+  .haut .rang1 { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .logo { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #15171A; box-shadow: 0 0 0 2px rgba(255,178,36,.6); color: var(--acc); flex: none; }
+  .logo svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+  .haut h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
+  .haut p { margin: 2px 0 0; color: #AEB4BC; font-size: 14px; }
+  .haut .titre { flex: 1; min-width: 220px; }
+  .recherche { display: flex; align-items: center; gap: 8px; background: #2A2E33; border-radius: 12px; padding: 0 12px; min-height: 44px; width: min(320px, 100%); }
+  .recherche input { flex: 1; background: none; border: 0; color: #EEF0F2; font: inherit; min-width: 0; }
+  .recherche input::placeholder { color: #8D949C; }
+  .recherche input:focus { outline: none; }
+  .bouton { min-height: 44px; padding: 0 16px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; background: #2F3439; color: #EEF0F2; white-space: nowrap; }
+  .bouton:hover { background: #3A4047; }
+  .bouton.prim { background: var(--acc); color: var(--acc-enc); }
+  .bouton.prim:hover { background: #FFC14D; }
+  .bouton.clair { background: var(--carte); color: var(--txt); border: 1px solid var(--trait); }
+  .bouton.clair:hover { background: #F7F7F5; }
+  .bouton.petit { min-height: 36px; padding: 0 12px; font-size: 14px; border-radius: 10px; }
+  .bouton[disabled] { opacity: .45; pointer-events: none; }
+  .projets { display: flex; gap: 6px; overflow-x: auto; padding: 16px 0 14px; scrollbar-width: none; }
+  .projets button { min-height: 40px; padding: 0 14px; border-radius: 20px; color: #C9CED4; font-weight: 600; font-size: 14px; white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #343940; }
+  .projets button[aria-selected="true"] { background: #EEF0F2; color: var(--graphite); border-color: #EEF0F2; }
+  .projets i { font-style: normal; font-family: var(--mono); font-size: 12px; min-width: 22px; height: 20px; line-height: 20px; border-radius: 10px; text-align: center; padding: 0 6px; background: var(--acc); color: var(--acc-enc); }
+  .projets i:empty { display: none; }
+
+  main { padding: 20px clamp(16px, 4vw, 40px) 60px; display: grid; gap: 20px; max-width: 1480px; margin: 0 auto; }
+  /* Chiffres clés */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .kpi { background: var(--carte); border: 1px solid var(--trait); border-radius: 18px; padding: 16px 18px; text-align: left; display: flex; flex-direction: column; gap: 2px; transition: border-color .15s, box-shadow .15s; }
+  .kpi:hover { border-color: #C9C9C3; }
+  .kpi[aria-pressed="true"] { border-color: var(--graphite); box-shadow: inset 0 0 0 1px var(--graphite); }
+  .kpi small { font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--doux); display: flex; align-items: center; gap: 6px; }
+  .kpi b { font-size: 34px; line-height: 1.15; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .kpi span { font-size: 13px; color: var(--doux); }
+  .pastille { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  @media (max-width: 760px) { .kpis { grid-template-columns: 1fr 1fr; } .kpi b { font-size: 28px; } }
+
+  /* Zone principale : liste + détail */
+  .corps { display: grid; grid-template-columns: minmax(0, 1fr) minmax(380px, 46%); gap: 20px; align-items: start; }
+  .corps.seul { grid-template-columns: 1fr; }
+  @media (max-width: 1080px) { .corps { grid-template-columns: 1fr; } }
+  .panneau { background: var(--carte); border: 1px solid var(--trait); border-radius: 18px; }
+  .outils { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 14px 16px; border-bottom: 1px solid var(--trait); }
+  .outils h2 { margin: 0 auto 0 0; font-size: 16px; }
+  select { min-height: 36px; border-radius: 10px; border: 1px solid var(--trait); background: var(--carte); padding: 0 10px; font: inherit; font-size: 14px; color: var(--txt); max-width: 260px; }
+  .groupe { padding: 10px 16px 4px; font-family: var(--mono); font-size: 12px; color: var(--doux); text-transform: uppercase; letter-spacing: .05em; display: flex; justify-content: space-between; gap: 8px; }
+  .notes { list-style: none; margin: 0; padding: 0 8px 8px; }
+  .note { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; padding: 12px 10px; border-radius: 12px; cursor: pointer; align-items: start; }
+  .note:hover { background: #F7F7F5; }
+  .note[aria-current="true"] { background: #FFF6E3; box-shadow: inset 3px 0 0 var(--acc); }
+  .note .etat { grid-row: 1 / span 2; margin-top: 3px; }
+  .note .t { font-weight: 500; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .note .m { grid-column: 2; font-size: 12.5px; color: var(--doux); display: flex; flex-wrap: wrap; gap: 4px 10px; }
+  .note img { grid-row: 1 / span 2; grid-column: 3; width: 72px; height: 48px; object-fit: cover; border-radius: 8px; border: 1px solid var(--trait); }
+  .statut { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 10px; white-space: nowrap; }
+  .statut.todo { background: var(--todo-fond); color: var(--todo); }
+  .statut.ok { background: var(--ok-fond); color: var(--ok); }
+  .statut.re { background: var(--re-fond); color: var(--re); }
+  .vide { text-align: center; padding: 48px 20px; color: var(--doux); }
+  .vide b { display: block; font-size: 17px; color: var(--txt); margin-bottom: 6px; }
+  .vide .bouton { margin-top: 14px; }
+
+  /* Détail */
+  .detail { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto; }
+  .detail .entete { padding: 16px 18px; border-bottom: 1px solid var(--trait); display: flex; gap: 10px; align-items: flex-start; }
+  .detail .entete div { flex: 1; min-width: 0; }
+  .detail h2 { margin: 6px 0 2px; font-size: 18px; line-height: 1.35; white-space: pre-wrap; word-break: break-word; }
+  .detail .sous { font-size: 13px; color: var(--doux); }
+  .detail section { padding: 14px 18px; border-bottom: 1px solid var(--trait); }
+  .detail h3 { margin: 0 0 8px; font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--doux); font-weight: 600; }
+  .detail img.cap { width: 100%; max-height: 70vh; object-fit: contain; background: #F1F1EE; border-radius: 12px; border: 1px solid var(--trait); display: block; cursor: zoom-in; }
+  .zone { display: flex; gap: 10px; margin-top: 10px; align-items: flex-start; }
+  .zone .n { width: 24px; height: 24px; border-radius: 50%; background: #FF3B30; color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 13px; flex: none; }
+  .zone small, .ligne-d small { display: block; color: var(--doux); font-size: 12.5px; }
+  code { font-family: var(--mono); font-size: 12px; background: #F1F1EE; padding: 1px 6px; border-radius: 6px; color: #2B4A80; word-break: break-all; }
+  .ligne-d { margin-bottom: 8px; }
+  .erreur { font-family: var(--mono); font-size: 12px; background: var(--re-fond); color: #7A1A12; border-radius: 8px; padding: 6px 8px; margin-bottom: 6px; white-space: pre-wrap; word-break: break-word; }
+  .parcours { font-size: 13px; color: var(--doux); display: flex; flex-direction: column; gap: 2px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 18px; }
+  .ferme { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; color: var(--doux); flex: none; }
+  .ferme:hover { background: #F1F1EE; }
+  .version { display: flex; gap: 8px; align-items: center; }
+  .version input { width: 90px; min-height: 36px; border: 1px solid var(--trait); border-radius: 10px; padding: 0 10px; font: inherit; font-family: var(--mono); font-size: 13px; }
+
+  /* Message */
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--graphite); color: #EEF0F2; padding: 12px 18px; border-radius: 14px; box-shadow: 0 12px 30px rgba(0,0,0,.25); font-size: 14.5px; z-index: 20; width: max-content; max-width: 92vw; }
+  .depot { position: fixed; inset: 0; background: rgba(29,32,36,.55); display: grid; place-items: center; z-index: 30; color: #fff; font-size: 20px; font-weight: 700; border: 4px dashed var(--acc); }
+  .zoom { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: grid; place-items: center; z-index: 40; cursor: zoom-out; padding: 16px; }
+  .zoom img { max-width: 100%; max-height: 100%; border-radius: 8px; }
+  .aide { font-size: 13.5px; color: var(--doux); padding: 0 4px; }
+  .aide b { color: var(--txt); }
+  @media (max-width: 1080px) { .detail { position: fixed; inset: 0; max-height: none; border-radius: 0; z-index: 15; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="haut">
+  <div class="rang1">
+    <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg></span>
+    <div class="titre"><h1>Débogage · tous les projets</h1><p id="resume">Chargement…</p></div>
+    <label class="recherche"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8D949C" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="cherche" type="search" placeholder="Chercher une note, un écran, un sélecteur…" aria-label="Chercher"></label>
+    <button class="bouton" id="noter" type="button" title="Noter un problème sur ce tableau de bord (outil de débogage)">✎ Noter</button>
+    <button class="bouton prim" id="importer" type="button">⬆ Importer un export</button>
+    <input type="file" id="fichier" accept=".json,.zip,application/json,application/zip" multiple hidden>
+  </div>
+  <nav class="projets" id="projets" role="tablist" aria-label="Projets"></nav>
+</header>
+
+<main>
+  <section class="kpis" id="kpis" aria-label="Chiffres clés"></section>
+  <div class="corps seul" id="corps">
+    <section class="panneau" aria-label="Notes">
+      <div class="outils">
+        <h2 id="titreListe">Notes</h2>
+        <select id="fEcran" aria-label="Filtrer par écran"></select>
+        <button class="bouton clair petit" id="copier" type="button">Copier pour Claude</button>
+        <button class="bouton clair petit" id="telecharger" type="button">⬇ .md</button>
+      </div>
+      <div id="liste"></div>
+    </section>
+    <aside class="panneau detail" id="detail" hidden aria-label="Détail de la note"></aside>
+  </div>
+  <p class="aide">Chaque appli qui embarque l'outil garde ses notes dans sa propre base. Pour les réunir ici : dans l'appli, <b>bulle › ⚙ › « Pour le tableau de bord »</b> (ou le ZIP), puis <b>Importer un export</b> ou glisse le fichier sur cette page. Un nouvel import du même projet met les notes à jour, sans doublons. Les notes prises sur ce tableau de bord avec sa propre bulle apparaissent dans le projet « tableau-de-bord ».</p>
+</main>
+<div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+<div class="depot" id="depot" hidden>Dépose le fichier d'export ici</div>
+<div class="zoom" id="zoom" hidden><img alt="Capture agrandie"></div>
+
+<script>
+(() => {
+"use strict";
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const tronq = (s, n) => { s = String(s || ""); return s.length > n ? s.slice(0, n - 1) + "…" : s; };
+const quand = s => { const d = new Date(s); return isNaN(d) ? "" : d.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" }) + " " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }); };
+const NUM = "① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩".split(" ");
+const PROPRE = "tableau-de-bord";
+
+const S = { notes: [], projets: {}, projet: "", filtre: "todo", ecran: "", q: "", sel: "", db: null, assets: null, dl: null };
+let toastT = 0;
+function toast(t) { const e = $("toast"); e.textContent = t; e.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => e.hidden = true, 3500); }
+const cleDe = n => (n.projet || "sans-projet") + "__" + n.uid;
+const statut = n => n.valide ? "ok" : (n.rouvertes || []).length ? "re" : "todo";
+const LIB = { todo: "À traiter", ok: "Corrigée", re: "Rouverte" };
+const ICO = { todo: "●", ok: "✓", re: "↺" };
+
+/* ---------- Stockage : base de l'artifact, sinon ce navigateur ---------- */
+const cap = n => window.claude && window.claude.use ? Promise.race([window.claude.use(n), new Promise(r => setTimeout(() => r(null), 6000))]).catch(() => null) : Promise.resolve(null);
+async function charger() {
+  [S.db, S.assets, S.dl] = await Promise.all([cap("db"), cap("assets"), cap("downloads")]);
+  if (S.db) {
+    const t = setTimeout(() => { if (!S.charge) { S.charge = true; rendre(); } }, 10000);
+    S.db.collection("notes").onSnapshot(s => {
+      clearTimeout(t); S.charge = true;
+      const autres = S.notes.filter(n => n.projet === PROPRE);
+      S.notes = s.docs.map(d => ({ _cle: d.id, ...d.data() })).concat(autres);
+      S.db.collection("projets").get().then(p => { p.docs.forEach(d => S.projets[d.id] = d.data()); rendre(); }).catch(() => rendre());
+    }, () => { S.charge = true; rendre(); });
+    // les notes prises sur ce tableau de bord avec sa propre bulle
+    S.db.collection("debugnotes").onSnapshot(s => {
+      S.notes = S.notes.filter(n => n.projet !== PROPRE).concat(s.docs.map(d => ({ _cle: "propre__" + d.id, _propre: d.id, uid: d.id, ...d.data(), projet: PROPRE })));
+      rendre();
+    }, () => {});
+  } else {
+    try { const v = JSON.parse(localStorage.getItem("tdb-debogage") || "null"); if (v) { S.notes = v.notes || []; S.projets = v.projets || {}; } } catch (e) {}
+    S.charge = true; rendre();
+  }
+}
+function sauverLocal() { if (!S.db) try { localStorage.setItem("tdb-debogage", JSON.stringify({ notes: S.notes.filter(n => n.projet !== PROPRE), projets: S.projets })); } catch (e) { toast("Stockage du navigateur plein : publie le tableau de bord pour utiliser sa base."); } }
+async function ecrire(n) {
+  n._cle = n._cle || cleDe(n);
+  if (n._propre) { if (S.db) { const { _cle, _propre, ...d } = n; await S.db.collection("debugnotes").doc(n._propre).set(d).catch(() => {}); } return; }
+  if (S.db) { const { _cle, ...d } = n; await S.db.collection("notes").doc(n._cle).set(JSON.parse(JSON.stringify(d))); }
+  else { const i = S.notes.findIndex(x => x._cle === n._cle); if (i < 0) S.notes.push(n); else S.notes[i] = n; sauverLocal(); }
+}
+async function effacer(n) {
+  if (S.db) await (n._propre ? S.db.collection("debugnotes").doc(n._propre) : S.db.collection("notes").doc(n._cle)).delete();
+  else { S.notes = S.notes.filter(x => x !== n); sauverLocal(); }
+}
+
+/* ---------- Import : .json de l'outil ou ZIP ---------- */
+function lireZip(buf) {
+  const dv = new DataView(buf), u8 = new Uint8Array(buf), dec = new TextDecoder(), out = {};
+  let fin = -1; for (let i = buf.byteLength - 22; i >= 0; i--) if (dv.getUint32(i, true) === 0x06054b50) { fin = i; break; }
+  if (fin < 0) throw new Error("ZIP illisible");
+  let p = dv.getUint32(fin + 16, true); const nb = dv.getUint16(fin + 10, true);
+  for (let k = 0; k < nb; k++) {
+    const meth = dv.getUint16(p + 10, true), taille = dv.getUint32(p + 20, true), ln = dv.getUint16(p + 28, true), le = dv.getUint16(p + 30, true), lc = dv.getUint16(p + 32, true), off = dv.getUint32(p + 42, true);
+    const nom = dec.decode(u8.subarray(p + 46, p + 46 + ln));
+    const debut = off + 30 + dv.getUint16(off + 26, true) + dv.getUint16(off + 28, true);
+    if (meth === 0) out[nom] = u8.slice(debut, debut + taille);
+    p += 46 + ln + le + lc;
+  }
+  return out;
+}
+const versDataUrl = (u8, type) => new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(new Blob([u8], { type })); });
+async function importer(fichiers) {
+  let total = 0, maj = 0;
+  for (const f of fichiers) {
+    try {
+      let paquet, images = {};
+      if (/\.zip$/i.test(f.name)) {
+        const z = lireZip(await f.arrayBuffer());
+        if (!z["notes.json"]) throw new Error("pas de notes.json dans le ZIP");
+        paquet = JSON.parse(new TextDecoder().decode(z["notes.json"]));
+        for (const k in z) if (k.startsWith("captures/")) images[k] = z[k];
+      } else paquet = JSON.parse(await f.text());
+      if (paquet.format !== "outil-debogage" || !Array.isArray(paquet.notes)) throw new Error("ce fichier ne vient pas de l'outil de débogage");
+      const projet = paquet.projet || "sans-projet";
+      S.projets[projet] = { versionApp: paquet.versionApp || "", importeLe: new Date().toISOString(), outil: paquet.outil || "" };
+      if (S.db) await S.db.collection("projets").doc(projet).set(S.projets[projet]).catch(() => {});
+      for (const n of paquet.notes) {
+        n.projet = projet;
+        const cle = cleDe(n), ex = S.notes.find(x => x._cle === cle);
+        // le tableau de bord garde son statut s'il a été changé ici après l'export
+        if (ex && ex.majTableau && ex.majTableau > paquet.exporteLe) { n.valide = ex.valide; n.corrigeeEn = ex.corrigeeEn; n.rouvertes = ex.rouvertes; n.majTableau = ex.majTableau; }
+        for (const p of n.pieces || []) if (p.image) p.image = await rangerImage(p.image, images);
+        n._cle = cle; await ecrire(n); ex ? maj++ : total++;
+      }
+      toast(`${f.name} : ${total} nouvelle(s), ${maj} mise(s) à jour.`);
+    } catch (e) { toast(`${f.name} : ${e.message}`); }
+  }
+  S.projet = S.projet || ""; rendre();
+}
+async function rangerImage(ref, images) {
+  const nom = "captures/" + String(ref.cle).replace(/[^a-z0-9_-]/gi, "_") + ".jpg";
+  let data = ref.data || (images[nom] ? await versDataUrl(images[nom], "image/jpeg") : "");
+  if (!data) return ref.asset ? { cle: ref.cle, asset: ref.asset } : { cle: ref.cle };
+  if (S.assets) { try { const b = await (await fetch(data)).blob(); const r = await S.assets.upload(b); return { cle: ref.cle, asset: r.id }; } catch (e) {} }
+  return { cle: ref.cle, data: data.length < 700000 ? data : "" };
+}
+const srcImage = ref => !ref ? "" : ref.asset ? "/_blob/" + ref.asset : ref.data || "";
+
+/* ---------- Filtres ---------- */
+function visibles(sansFiltreStatut) {
+  const q = S.q.toLowerCase();
+  return S.notes.filter(n => (!S.projet || n.projet === S.projet) && (!S.ecran || n.ecran === S.ecran)
+    && (sansFiltreStatut || S.filtre === "tout" || statut(n) === S.filtre || (S.filtre === "todo" && statut(n) === "re"))
+    && (!q || JSON.stringify([n.texte, n.ecran, n.pieces]).toLowerCase().includes(q)));
+}
+
+/* ---------- Rendu ---------- */
+function rendre() {
+  if (!S.charge) return;
+  const projets = [...new Set(S.notes.map(n => n.projet))].sort((a, b) => a === PROPRE ? 1 : b === PROPRE ? -1 : a.localeCompare(b));
+  const todoDe = p => S.notes.filter(n => n.projet === p && !n.valide).length;
+  $("projets").innerHTML = [["", "Tous les projets", S.notes.filter(n => !n.valide).length]].concat(projets.map(p => [p, p, todoDe(p)]))
+    .map(([k, t, n]) => `<button type="button" role="tab" data-p="${esc(k)}" aria-selected="${S.projet === k}">${esc(t)}<i>${n || ""}</i></button>`).join("");
+  const base = visibles(true), todo = base.filter(n => statut(n) === "todo").length, re = base.filter(n => statut(n) === "re").length, ok = base.filter(n => n.valide).length;
+  const mois = Date.now() - 30 * 864e5, okMois = base.filter(n => n.valide && Date.parse(n.valide) > mois).length;
+  const nbProjets = S.projet ? 1 : projets.length;
+  $("resume").textContent = !S.notes.length ? "Aucune note importée pour l'instant." :
+    `${todo + re} note${todo + re > 1 ? "s" : ""} à traiter${re ? `, dont ${re} rouverte${re > 1 ? "s" : ""}` : ""} · ${nbProjets} projet${nbProjets > 1 ? "s" : ""}${S.projet && S.projets[S.projet] && S.projets[S.projet].importeLe ? " · dernier import le " + quand(S.projets[S.projet].importeLe) : ""}`;
+  const kpi = (k, lib, val, sous, coul) => `<button type="button" class="kpi" data-k="${k}" aria-pressed="${S.filtre === k}"><small><span class="pastille" style="background:${coul}"></span>${lib}</small><b class="num">${val}</b><span>${sous}</span></button>`;
+  $("kpis").innerHTML = kpi("todo", "À traiter", todo + re, re ? `dont ${re} rouverte${re > 1 ? "s" : ""} ↺` : "rien de rouvert", "#C77D00")
+    + kpi("re", "Rouvertes", re, "le problème est revenu", "#B42318")
+    + kpi("ok", "Corrigées", ok, `${okMois} sur les 30 derniers jours`, "#17733F")
+    + kpi("tout", "Toutes les notes", base.length, (k => `${k} écran${k > 1 ? "s" : ""} concerné${k > 1 ? "s" : ""}`)(new Set(base.map(n => n.ecran)).size), "#5D636B");
+  // écrans
+  const ecrans = [...new Set(S.notes.filter(n => !S.projet || n.projet === S.projet).map(n => n.ecran || ""))].sort();
+  if (S.ecran && !ecrans.includes(S.ecran)) S.ecran = "";
+  $("fEcran").innerHTML = `<option value="">Tous les écrans (${ecrans.length})</option>` + ecrans.map(e => `<option value="${esc(e)}"${e === S.ecran ? " selected" : ""}>${esc(tronq(e || "Écran inconnu", 50))}</option>`).join("");
+  // liste groupée par écran
+  const liste = visibles().sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  $("titreListe").textContent = { todo: "À traiter", re: "Rouvertes", ok: "Corrigées", tout: "Toutes les notes" }[S.filtre] + ` (${liste.length})`;
+  $("copier").disabled = $("telecharger").disabled = !liste.length;
+  if (!liste.length) {
+    $("liste").innerHTML = !S.notes.length
+      ? `<div class="vide"><b>Rien à afficher pour l'instant</b>Importe l'export d'une appli (.json ou .zip) pour réunir ses notes ici.<br><button type="button" class="bouton prim" data-imp>⬆ Importer un export</button></div>`
+      : `<div class="vide"><b>${S.filtre === "todo" ? "Tout est traité 🎉" : "Aucune note ici"}</b>${S.q ? "Aucun résultat pour « " + esc(S.q) + " »." : "Change de filtre ou de projet pour en voir d'autres."}</div>`;
+  } else {
+    const groupes = new Map(); liste.forEach(n => { const k = (S.projet ? "" : n.projet + " · ") + (n.ecran || "Écran inconnu"); if (!groupes.has(k)) groupes.set(k, []); groupes.get(k).push(n); });
+    $("liste").innerHTML = [...groupes].map(([g, ns]) => `<div class="groupe"><span>${esc(g)}</span><span>${ns.length}</span></div><ul class="notes">${ns.map(n => {
+      const st = statut(n), cap = (n.pieces || []).find(p => p.type === "capture" && p.image), src = cap && srcImage(cap.image);
+      const autres = (n.pieces || []).filter(p => p.type !== "capture").length;
+      return `<li class="note" data-c="${esc(n._cle)}" tabindex="0" aria-current="${S.sel === n._cle}"><span class="statut ${st} etat" title="${LIB[st]}">${ICO[st]}</span>
+        <span class="t">${esc(n.texte)}</span>${src ? `<img alt="" loading="lazy" src="${esc(src)}">` : "<span></span>"}
+        <span class="m"><span>${esc(quand(n.at))}</span>${n.version ? `<span class="mono">v${esc(n.version)}</span>` : ""}${n.valide ? `<span>✓ corrigée${n.corrigeeEn ? " en v" + esc(n.corrigeeEn) : ""}</span>` : ""}${(n.rouvertes || []).length ? `<span>↺ ×${n.rouvertes.length}</span>` : ""}${autres ? `<span>${autres} pièce${autres > 1 ? "s" : ""}</span>` : ""}${n.contexte && n.contexte.erreurs && n.contexte.erreurs.length ? `<span style="color:var(--re)">⚠ ${n.contexte.erreurs.length} erreur${n.contexte.erreurs.length > 1 ? "s" : ""} JS</span>` : ""}</span></li>`;
+    }).join("")}</ul>`).join("");
+  }
+  rendreDetail();
+}
+function rendreDetail() {
+  const n = S.notes.find(x => x._cle === S.sel), d = $("detail");
+  $("corps").classList.toggle("seul", !n); d.hidden = !n; if (!n) return;
+  const st = statut(n), v = S.projets[n.projet] && S.projets[n.projet].versionApp || n.version || "";
+  const b = [];
+  for (const p of n.pieces || []) {
+    if (p.type === "capture") b.push(`<section><h3>Capture${p.photo === false ? " (annotations seules)" : ""}</h3>${p.image && srcImage(p.image) ? `<img class="cap" src="${esc(srcImage(p.image))}" alt="Capture annotée">` : "<small>Image non importée.</small>"}
+      ${(p.zones || []).map(z => `<div class="zone"><span class="n">${z.n}</span><div><b>${esc(z.consigne || "(pas de consigne)")}</b>${z.elements && z.elements.length ? `<small>${z.elements.map(e => esc(e.t) + " <code>" + esc(e.s) + "</code>").join(" · ")}</small>` : ""}</div></div>`).join("")}
+      ${p.textes && p.textes.length ? `<p class="sous">Écrit sur la capture : ${p.textes.map(t => "« " + esc(t) + " »").join(", ")}</p>` : ""}</section>`);
+    else if (p.type === "element") b.push(`<section><h3>Élément désigné</h3><div class="ligne-d"><b>${esc(p.balise)}${p.texte ? " « " + esc(p.texte) + " »" : ""}</b> <code>${esc(p.selecteur)}</code><small>${esc(p.taille)} · ${esc(p.styles.police)} · ${esc(p.styles.couleur)} sur ${esc(p.styles.fond)}${p.styles.contraste ? " · contraste " + esc(p.styles.contraste) : ""}</small></div>${p.image && srcImage(p.image) ? `<img class="cap" style="max-height:160px;width:auto;max-width:100%" src="${esc(srcImage(p.image))}" alt="Élément">` : ""}</section>`);
+    else if (p.type === "texte") b.push(`<section><h3>Texte</h3><div class="ligne-d">« ${esc(p.texte)} »${p.remplacement ? ` → <b>« ${esc(p.remplacement)} »</b>` : ""}<small><code>${esc(p.element)}</code></small></div></section>`);
+    else if (p.type === "mesure") b.push(`<section><h3>Mesure · ${esc(p.genre)}</h3><div class="ligne-d"><b>${esc(p.resume)}</b><small>${esc(p.details || "")}</small></div></section>`);
+  }
+  const c = n.contexte;
+  if (c) {
+    if (c.erreurs && c.erreurs.length) b.push(`<section><h3>Erreurs JavaScript (${c.erreurs.length})</h3>${c.erreurs.slice(-5).map(e => `<div class="erreur">${esc(e.type)} : ${esc(e.message)}${e.source ? "\n" + esc(e.source) : ""}</div>`).join("")}</section>`);
+    if (c.parcours && c.parcours.length) b.push(`<section><h3>Parcours avant la note</h3><div class="parcours">${c.parcours.slice(-10).map(x => `<span>${x.type === "écran" ? "→ <b>" + esc(x.ecran) + "</b>" : esc(x.type + " " + x.cible)}</span>`).join("")}</div></section>`);
+    const a = c.appareil; if (a) b.push(`<section><h3>Appareil</h3><span class="sous">${esc([a.systeme, a.navigateur, a.ecran + " ×" + a.densite, a.orientation, "thème " + a.theme].filter(Boolean).join(" · "))}</span>${c.etat ? `<p style="margin:8px 0 0"><code>${esc(tronq(c.etat, 600))}</code></p>` : ""}</section>`);
+  }
+  d.innerHTML = `<div class="entete"><div><span class="statut ${st}">${ICO[st]} ${LIB[st]}${n.valide && n.corrigeeEn ? " en v" + esc(n.corrigeeEn) : ""}</span>
+      <h2>${esc(n.texte)}</h2><div class="sous">${esc(n.projet)} · ${esc(n.ecran || "")} · ${esc(quand(n.at))}${n.version ? " · v" + esc(n.version) : ""}${n.via === "voix" ? " · dictée" : ""}</div></div>
+      <button type="button" class="ferme" data-d="fermer" aria-label="Fermer le détail">✕</button></div>
+    ${b.join("")}
+    ${(n.rouvertes || []).length ? `<section><h3>Historique</h3>${n.rouvertes.map(r => `<div class="sous">↺ Rouverte le ${esc(quand(r.at))}${r.version ? " en v" + esc(r.version) : ""}${r.corrigeeEn ? " (corrigée en v" + esc(r.corrigeeEn) + ")" : ""}</div>`).join("")}</section>` : ""}
+    <div class="actions">
+      ${n.valide ? `<button type="button" class="bouton clair" data-d="rouvrir">↺ Rouvrir</button>` : `<span class="version"><input id="vCorr" value="${esc(v)}" aria-label="Version de correction" placeholder="version"><button type="button" class="bouton prim" data-d="valider">✓ Corrigée</button></span>`}
+      <button type="button" class="bouton clair" data-d="copier">Copier pour Claude</button>
+      <button type="button" class="bouton clair" data-d="suppr" style="color:var(--re)">Supprimer</button>
+    </div>`;
+}
+
+/* ---------- Texte pour Claude (même format que l'outil) ---------- */
+function texteClaude(notes) {
+  const L = [`# Notes de débogage${S.projet ? " — " + S.projet : " — tous les projets"}`, `${notes.length} note(s) · ${new Date().toLocaleString("fr-FR")}`, "", "Corrige chaque point ci-dessous. Les sélecteurs CSS indiquent les éléments concernés ; ①②… renvoient aux zones entourées sur les captures. Dis-moi ensuite dans quelle version chaque point est corrigé."];
+  const g = new Map(); notes.slice().sort((a, b) => String(a.at).localeCompare(String(b.at))).forEach(n => { const k = n.projet + " › " + (n.ecran || "Écran inconnu"); if (!g.has(k)) g.set(k, []); g.get(k).push(n); });
+  let i = 0;
+  for (const [k, ns] of g) {
+    L.push("", "## " + k);
+    for (const n of ns) {
+      L.push("", `### ${++i}. ${tronq(String(n.texte).split("\n")[0], 110)}`, `_${[quand(n.at), n.version ? "v" + n.version : "", (n.rouvertes || []).length ? "rouverte " + n.rouvertes.length + " fois" : ""].filter(Boolean).join(" · ")}_`);
+      if (String(n.texte).includes("\n")) L.push("", n.texte);
+      for (const p of n.pieces || []) {
+        if (p.type === "capture") { L.push("- **Capture**"); (p.zones || []).forEach(z => L.push(`  - Zone ${NUM[z.n - 1] || z.n} : ${z.consigne ? "« " + z.consigne + " »" : "(pas de consigne)"}${z.elements && z.elements.length ? " — contient " + z.elements.map(e => e.t + " `" + e.s + "`").join(", ") : ""}`)); }
+        else if (p.type === "element") L.push(`- **Élément** ${p.balise}${p.texte ? " « " + p.texte + " »" : ""} — \`${p.selecteur}\` — ${p.taille} — ${p.styles.police}, ${p.styles.couleur} sur ${p.styles.fond}${p.styles.contraste ? ", contraste " + p.styles.contraste : ""}`);
+        else if (p.type === "texte") L.push(p.remplacement ? `- **Texte à remplacer** : « ${p.texte} » → « ${p.remplacement} » (\`${p.element}\`)` : `- **Texte signalé** : « ${p.texte} » (\`${p.element}\`)`);
+        else if (p.type === "mesure") L.push(`- **Mesure** (${p.genre}) : ${p.resume}${p.details ? " — " + p.details : ""}`);
+      }
+      const c = n.contexte;
+      if (c && c.erreurs && c.erreurs.length) { L.push("- **Erreurs JavaScript** :"); c.erreurs.slice(-4).forEach(e => L.push(`  - ${e.type} : ${e.message}${e.source ? " (" + e.source + ")" : ""}`)); }
+      if (c && c.parcours && c.parcours.length) L.push(`- **Parcours** : ${c.parcours.slice(-6).map(x => x.type === "écran" ? "→ " + x.ecran : x.type + " " + x.cible).join(" · ")}`);
+      if (c && c.etat) L.push(`- **État** : \`${c.etat}\``);
+    }
+  }
+  return L.join("\n");
+}
+async function copierTexte(t) { try { await navigator.clipboard.writeText(t); return true; } catch (e) { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); let ok = false; try { ok = document.execCommand("copy"); } catch (er) {} a.remove(); return ok; } }
+
+/* ---------- Événements ---------- */
+$("projets").onclick = e => { const b = e.target.closest("[data-p]"); if (!b) return; S.projet = b.dataset.p; S.ecran = ""; S.sel = ""; rendre(); };
+$("kpis").onclick = e => { const b = e.target.closest("[data-k]"); if (!b) return; S.filtre = b.dataset.k; rendre(); };
+$("fEcran").onchange = e => { S.ecran = e.target.value; rendre(); };
+let tq = 0; $("cherche").oninput = e => { clearTimeout(tq); tq = setTimeout(() => { S.q = e.target.value.trim(); rendre(); }, 150); };
+$("importer").onclick = () => $("fichier").click();
+$("noter").onclick = () => window.Debogage && Debogage.ouvrir("note");
+$("fichier").onchange = e => { importer([...e.target.files]); e.target.value = ""; };
+$("liste").addEventListener("click", e => { if (e.target.closest("[data-imp]")) return $("fichier").click(); const li = e.target.closest("[data-c]"); if (!li) return; S.sel = S.sel === li.dataset.c ? "" : li.dataset.c; rendre(); if (S.sel && innerWidth > 1080) $("detail").scrollTop = 0; });
+$("liste").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.matches("[data-c]")) e.target.click(); });
+$("copier").onclick = async () => { const ns = visibles(); toast(await copierTexte(texteClaude(ns)) ? `${ns.length} note(s) copiée(s), prêtes à coller dans Claude.` : "Copie impossible ici."); };
+$("telecharger").onclick = async () => {
+  const t = texteClaude(visibles()), nom = "debogage_" + (S.projet || "tous-projets") + "_" + new Date().toISOString().slice(0, 10) + ".md";
+  try { if (S.dl) { await S.dl.save({ filename: nom, data: t }); return; } } catch (e) { if (e && e.code === "declined") return; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([t], { type: "text/markdown" })); a.download = nom; a.click();
+};
+$("detail").addEventListener("click", async e => {
+  const b = e.target.closest("[data-d]"), img = e.target.closest("img.cap");
+  if (img) { $("zoom").querySelector("img").src = img.src; $("zoom").hidden = false; return; }
+  if (!b) return; const n = S.notes.find(x => x._cle === S.sel); if (!n) return; const k = b.dataset.d;
+  if (k === "fermer") { S.sel = ""; return rendre(); }
+  if (k === "valider") { n.valide = new Date().toISOString(); n.corrigeeEn = $("vCorr").value.trim(); n.majTableau = n.valide; await ecrire(n); toast("Marquée corrigée" + (n.corrigeeEn ? " en v" + n.corrigeeEn : "") + "."); }
+  if (k === "rouvrir") { n.rouvertes = (n.rouvertes || []).concat([{ at: new Date().toISOString(), corrigeeEn: n.corrigeeEn || "" }]); n.valide = null; n.majTableau = new Date().toISOString(); await ecrire(n); toast("Note rouverte."); }
+  if (k === "copier") toast(await copierTexte(texteClaude([n])) ? "Note copiée pour Claude." : "Copie impossible ici.");
+  if (k === "suppr") { if (!b.dataset.c) { b.dataset.c = 1; b.textContent = "Confirmer la suppression"; return; } await effacer(n); S.sel = ""; toast("Note supprimée."); }
+  rendre();
+});
+$("zoom").onclick = () => $("zoom").hidden = true;
+addEventListener("keydown", e => { if (e.key === "Escape") { if (!$("zoom").hidden) $("zoom").hidden = true; else if (S.sel) { S.sel = ""; rendre(); } } });
+// glisser-déposer
+let dc = 0;
+addEventListener("dragenter", e => { if ([...(e.dataTransfer && e.dataTransfer.types || [])].includes("Files")) { dc++; $("depot").hidden = false; } });
+addEventListener("dragleave", () => { if (--dc <= 0) { dc = 0; $("depot").hidden = true; } });
+addEventListener("dragover", e => e.preventDefault());
+addEventListener("drop", e => { e.preventDefault(); dc = 0; $("depot").hidden = true; if (e.dataTransfer.files.length) importer([...e.dataTransfer.files]); });
+window.__tdb = { S, importer, rendre };
+charger();
+})();
+</script>
+<!-- L'outil de débogage lui-même, pour noter ce qui ne va pas sur ce tableau de bord -->
+<script>/*OUTIL_DEBOGAGE*/</script>
+<script>Debogage.init({ projet: "tableau-de-bord", version: "1.0.0", bulle: false, ecran: () => { const p = document.querySelector("#projets [aria-selected=true]"); const d = document.querySelector("#detail:not([hidden]) h2"); return "Tableau de bord › " + (p ? p.textContent.replace(/\d+$/, "") : "") + (d ? " › détail" : ""); } });</script>
+</body>
+</html>

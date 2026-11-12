@@ -1,0 +1,2036 @@
+/*!
+ * Outil de débogage v1.0.0
+ * Bulle de notes, capture annotée, inspecteur d'élément, sélection de texte,
+ * mesures, contexte technique automatique et export « prêt pour Claude ».
+ * Inclut html-to-image (MIT) pour les captures d'écran.
+ */
+(function () {
+"use strict";
+if (window.Debogage && window.Debogage.__charge) return;
+const VERSION_OUTIL = "1.0.0";
+/* ---------- html-to-image 1.11 (MIT) : captures d'écran ---------- */
+const htmlToImage = (function () { var exports = {}, module = { exports: exports }, define; !function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t="undefined"!=typeof globalThis?globalThis:t||self).htmlToImage={})}(this,(function(t){"use strict";function e(t,e,n,r){return new(n||(n=Promise))((function(i,o){function u(t){try{a(r.next(t))}catch(t){o(t)}}function c(t){try{a(r.throw(t))}catch(t){o(t)}}function a(t){var e;t.done?i(t.value):(e=t.value,e instanceof n?e:new n((function(t){t(e)}))).then(u,c)}a((r=r.apply(t,e||[])).next())}))}function n(t,e){var n,r,i,o,u={label:0,sent:function(){if(1&i[0])throw i[1];return i[1]},trys:[],ops:[]};return o={next:c(0),throw:c(1),return:c(2)},"function"==typeof Symbol&&(o[Symbol.iterator]=function(){return this}),o;function c(c){return function(a){return function(c){if(n)throw new TypeError("Generator is already executing.");for(;o&&(o=0,c[0]&&(u=0)),u;)try{if(n=1,r&&(i=2&c[0]?r.return:c[0]?r.throw||((i=r.return)&&i.call(r),0):r.next)&&!(i=i.call(r,c[1])).done)return i;switch(r=0,i&&(c=[2&c[0],i.value]),c[0]){case 0:case 1:i=c;break;case 4:return u.label++,{value:c[1],done:!1};case 5:u.label++,r=c[1],c=[0];continue;case 7:c=u.ops.pop(),u.trys.pop();continue;default:if(!(i=u.trys,(i=i.length>0&&i[i.length-1])||6!==c[0]&&2!==c[0])){u=0;continue}if(3===c[0]&&(!i||c[1]>i[0]&&c[1]<i[3])){u.label=c[1];break}if(6===c[0]&&u.label<i[1]){u.label=i[1],i=c;break}if(i&&u.label<i[2]){u.label=i[2],u.ops.push(c);break}i[2]&&u.ops.pop(),u.trys.pop();continue}c=e.call(t,u)}catch(t){c=[6,t],r=0}finally{n=i=0}if(5&c[0])throw c[1];return{value:c[0]?c[1]:void 0,done:!0}}([c,a])}}}var r,i=(r=0,function(){return r+=1,"u".concat("0000".concat((Math.random()*Math.pow(36,4)<<0).toString(36)).slice(-4)).concat(r)});function o(t){for(var e=[],n=0,r=t.length;n<r;n++)e.push(t[n]);return e}var u=null;function c(t){return void 0===t&&(t={}),u||(u=t.includeStyleProperties?t.includeStyleProperties:o(window.getComputedStyle(document.documentElement)))}function a(t,e){var n=(t.ownerDocument.defaultView||window).getComputedStyle(t).getPropertyValue(e);return n?parseFloat(n.replace("px","")):0}function s(t,e){void 0===e&&(e={});var n,r,i,o=e.width||(r=a(n=t,"border-left-width"),i=a(n,"border-right-width"),n.clientWidth+r+i),u=e.height||function(t){var e=a(t,"border-top-width"),n=a(t,"border-bottom-width");return t.clientHeight+e+n}(t);return{width:o,height:u}}var l=16384;function f(t,e){return void 0===e&&(e={}),t.toBlob?new Promise((function(n){t.toBlob(n,e.type?e.type:"image/png",e.quality?e.quality:1)})):new Promise((function(n){for(var r=window.atob(t.toDataURL(e.type?e.type:void 0,e.quality?e.quality:void 0).split(",")[1]),i=r.length,o=new Uint8Array(i),u=0;u<i;u+=1)o[u]=r.charCodeAt(u);n(new Blob([o],{type:e.type?e.type:"image/png"}))}))}function h(t){return new Promise((function(e,n){var r=new Image;r.onload=function(){r.decode().then((function(){requestAnimationFrame((function(){return e(r)}))}))},r.onerror=n,r.crossOrigin="anonymous",r.decoding="async",r.src=t}))}function d(t){return e(this,void 0,void 0,(function(){return n(this,(function(e){return[2,Promise.resolve().then((function(){return(new XMLSerializer).serializeToString(t)})).then(encodeURIComponent).then((function(t){return"data:image/svg+xml;charset=utf-8,".concat(t)}))]}))}))}function v(t,r,i){return e(this,void 0,void 0,(function(){var e,o,u;return n(this,(function(n){return e="http://www.w3.org/2000/svg",o=document.createElementNS(e,"svg"),u=document.createElementNS(e,"foreignObject"),o.setAttribute("width","".concat(r)),o.setAttribute("height","".concat(i)),o.setAttribute("viewBox","0 0 ".concat(r," ").concat(i)),u.setAttribute("width","100%"),u.setAttribute("height","100%"),u.setAttribute("x","0"),u.setAttribute("y","0"),u.setAttribute("externalResourcesRequired","true"),o.appendChild(u),u.appendChild(t),[2,d(o)]}))}))}var p=function(t,e){if(t instanceof e)return!0;var n=Object.getPrototypeOf(t);return null!==n&&(n.constructor.name===e.name||p(n,e))};function g(t,e,n,r){var i=".".concat(t,":").concat(e),o=n.cssText?function(t){var e=t.getPropertyValue("content");return"".concat(t.cssText," content: '").concat(e.replace(/'|"/g,""),"';")}(n):function(t,e){return c(e).map((function(e){var n=t.getPropertyValue(e),r=t.getPropertyPriority(e);return"".concat(e,": ").concat(n).concat(r?" !important":"",";")})).join(" ")}(n,r);return document.createTextNode("".concat(i,"{").concat(o,"}"))}function m(t,e,n,r){var o=window.getComputedStyle(t,n),u=o.getPropertyValue("content");if(""!==u&&"none"!==u){var c=i();try{e.className="".concat(e.className," ").concat(c)}catch(t){return}var a=document.createElement("style");a.appendChild(g(c,n,o,r)),e.appendChild(a)}}var w="application/font-woff",y="image/jpeg",b={woff:w,woff2:w,ttf:"application/font-truetype",eot:"application/vnd.ms-fontobject",png:"image/png",jpg:y,jpeg:y,gif:"image/gif",tiff:"image/tiff",svg:"image/svg+xml",webp:"image/webp"};function S(t){var e=function(t){var e=/\.([^./]*?)$/g.exec(t);return e?e[1]:""}(t).toLowerCase();return b[e]||""}function E(t){return-1!==t.search(/^(data:)/)}function x(t,e){return"data:".concat(e,";base64,").concat(t)}function C(t,r,i){return e(this,void 0,void 0,(function(){var e,o;return n(this,(function(n){switch(n.label){case 0:return[4,fetch(t,r)];case 1:if(404===(e=n.sent()).status)throw new Error('Resource "'.concat(e.url,'" not found'));return[4,e.blob()];case 2:return o=n.sent(),[2,new Promise((function(t,n){var r=new FileReader;r.onerror=n,r.onloadend=function(){try{t(i({res:e,result:r.result}))}catch(t){n(t)}},r.readAsDataURL(o)}))]}}))}))}var P={};function R(t,r,i){return e(this,void 0,void 0,(function(){var e,o,u,c,a;return n(this,(function(n){switch(n.label){case 0:if(e=function(t,e,n){var r=t.replace(/\?.*/,"");return n&&(r=t),/ttf|otf|eot|woff2?/i.test(r)&&(r=r.replace(/.*\//,"")),e?"[".concat(e,"]").concat(r):r}(t,r,i.includeQueryParams),null!=P[e])return[2,P[e]];i.cacheBust&&(t+=(/\?/.test(t)?"&":"?")+(new Date).getTime()),n.label=1;case 1:return n.trys.push([1,3,,4]),[4,C(t,i.fetchRequestInit,(function(t){var e=t.res,n=t.result;return r||(r=e.headers.get("Content-Type")||""),function(t){return t.split(/,/)[1]}(n)}))];case 2:return u=n.sent(),o=x(u,r),[3,4];case 3:return c=n.sent(),o=i.imagePlaceholder||"",a="Failed to fetch resource: ".concat(t),c&&(a="string"==typeof c?c:c.message),a&&console.warn(a),[3,4];case 4:return P[e]=o,[2,o]}}))}))}function T(t){return e(this,void 0,void 0,(function(){var e;return n(this,(function(n){return"data:,"===(e=t.toDataURL())?[2,t.cloneNode(!1)]:[2,h(e)]}))}))}function A(t,r){return e(this,void 0,void 0,(function(){var e,i,o,u;return n(this,(function(n){switch(n.label){case 0:return t.currentSrc?(e=document.createElement("canvas"),i=e.getContext("2d"),e.width=t.clientWidth,e.height=t.clientHeight,null==i||i.drawImage(t,0,0,e.width,e.height),[2,h(e.toDataURL())]):(o=t.poster,u=S(o),[4,R(o,u,r)]);case 1:return[2,h(n.sent())]}}))}))}function k(t,r){var i;return e(this,void 0,void 0,(function(){return n(this,(function(e){switch(e.label){case 0:return e.trys.push([0,3,,4]),(null===(i=null==t?void 0:t.contentDocument)||void 0===i?void 0:i.body)?[4,I(t.contentDocument.body,r,!0)]:[3,2];case 1:return[2,e.sent()];case 2:return[3,4];case 3:return e.sent(),[3,4];case 4:return[2,t.cloneNode(!1)]}}))}))}var L=function(t){return null!=t.tagName&&"SVG"===t.tagName.toUpperCase()};function N(t,e,n){return p(e,Element)&&(function(t,e,n){var r=e.style;if(r){var i=window.getComputedStyle(t);i.cssText?(r.cssText=i.cssText,r.transformOrigin=i.transformOrigin):c(n).forEach((function(n){var o=i.getPropertyValue(n);if("font-size"===n&&o.endsWith("px")){var u=Math.floor(parseFloat(o.substring(0,o.length-2)))-.1;o="".concat(u,"px")}p(t,HTMLIFrameElement)&&"display"===n&&"inline"===o&&(o="block"),"d"===n&&e.getAttribute("d")&&(o="path(".concat(e.getAttribute("d"),")")),r.setProperty(n,o,i.getPropertyPriority(n))}))}}(t,e,n),function(t,e,n){m(t,e,":before",n),m(t,e,":after",n)}(t,e,n),function(t,e){p(t,HTMLTextAreaElement)&&(e.innerHTML=t.value),p(t,HTMLInputElement)&&e.setAttribute("value",t.value)}(t,e),function(t,e){if(p(t,HTMLSelectElement)){var n=e,r=Array.from(n.children).find((function(e){return t.value===e.getAttribute("value")}));r&&r.setAttribute("selected","")}}(t,e)),e}function I(t,r,i){return e(this,void 0,void 0,(function(){return n(this,(function(u){return i||!r.filter||r.filter(t)?[2,Promise.resolve(t).then((function(t){return function(t,r){return e(this,void 0,void 0,(function(){return n(this,(function(e){return p(t,HTMLCanvasElement)?[2,T(t)]:p(t,HTMLVideoElement)?[2,A(t,r)]:p(t,HTMLIFrameElement)?[2,k(t,r)]:[2,t.cloneNode(L(t))]}))}))}(t,r)})).then((function(i){return function(t,r,i){var u,c;return e(this,void 0,void 0,(function(){var e;return n(this,(function(n){switch(n.label){case 0:return L(r)?[2,r]:(e=[],0===(e=null!=(a=t).tagName&&"SLOT"===a.tagName.toUpperCase()&&t.assignedNodes?o(t.assignedNodes()):p(t,HTMLIFrameElement)&&(null===(u=t.contentDocument)||void 0===u?void 0:u.body)?o(t.contentDocument.body.childNodes):o((null!==(c=t.shadowRoot)&&void 0!==c?c:t).childNodes)).length||p(t,HTMLVideoElement)?[2,r]:[4,e.reduce((function(t,e){return t.then((function(){return I(e,i)})).then((function(t){t&&r.appendChild(t)}))}),Promise.resolve())]);case 1:return n.sent(),[2,r]}var a}))}))}(t,i,r)})).then((function(e){return N(t,e,r)})).then((function(t){return function(t,r){return e(this,void 0,void 0,(function(){var e,i,o,u,c,a,s,l,f,h,d,v,p;return n(this,(function(n){switch(n.label){case 0:if(0===(e=t.querySelectorAll?t.querySelectorAll("use"):[]).length)return[2,t];i={},p=0,n.label=1;case 1:return p<e.length?(o=e[p],(u=o.getAttribute("xlink:href"))?(c=t.querySelector(u),a=document.querySelector(u),c||!a||i[u]?[3,3]:(s=i,l=u,[4,I(a,r,!0)])):[3,3]):[3,4];case 2:s[l]=n.sent(),n.label=3;case 3:return p++,[3,1];case 4:if((f=Object.values(i)).length){for(h="http://www.w3.org/1999/xhtml",(d=document.createElementNS(h,"svg")).setAttribute("xmlns",h),d.style.position="absolute",d.style.width="0",d.style.height="0",d.style.overflow="hidden",d.style.display="none",v=document.createElementNS(h,"defs"),d.appendChild(v),p=0;p<f.length;p++)v.appendChild(f[p]);t.appendChild(d)}return[2,t]}}))}))}(t,r)}))]:[2,null]}))}))}var D=/url\((['"]?)([^'"]+?)\1\)/g,H=/url\([^)]+\)\s*format\((["']?)([^"']+)\1\)/g,M=/src:\s*(?:url\([^)]+\)\s*format\([^)]+\)[,;]\s*)+/g;function F(t,r,i,o,u){return e(this,void 0,void 0,(function(){var e,c,a,s;return n(this,(function(n){switch(n.label){case 0:return n.trys.push([0,5,,6]),e=i?function(t,e){if(t.match(/^[a-z]+:\/\//i))return t;if(t.match(/^\/\//))return window.location.protocol+t;if(t.match(/^[a-z]+:/i))return t;var n=document.implementation.createHTMLDocument(),r=n.createElement("base"),i=n.createElement("a");return n.head.appendChild(r),n.body.appendChild(i),e&&(r.href=e),i.href=t,i.href}(r,i):r,c=S(r),a=void 0,u?[4,u(e)]:[3,2];case 1:return s=n.sent(),a=x(s,c),[3,4];case 2:return[4,R(e,c,o)];case 3:a=n.sent(),n.label=4;case 4:return[2,t.replace((l=r,f=l.replace(/([.*+?^${}()|\[\]\/\\])/g,"\\$1"),new RegExp("(url\\(['\"]?)(".concat(f,")(['\"]?\\))"),"g")),"$1".concat(a,"$3"))];case 5:return n.sent(),[3,6];case 6:return[2,t]}var l,f}))}))}function V(t){return-1!==t.search(D)}function q(t,r,i){return e(this,void 0,void 0,(function(){var e,o;return n(this,(function(n){return V(t)?(e=function(t,e){var n=e.preferredFontFormat;return n?t.replace(M,(function(t){for(;;){var e=H.exec(t)||[],r=e[0],i=e[2];if(!i)return"";if(i===n)return"src: ".concat(r,";")}})):t}(t,i),o=function(t){var e=[];return t.replace(D,(function(t,n,r){return e.push(r),t})),e.filter((function(t){return!E(t)}))}(e),[2,o.reduce((function(t,e){return t.then((function(t){return F(t,e,r,i)}))}),Promise.resolve(e))]):[2,t]}))}))}function U(t,r,i){var o;return e(this,void 0,void 0,(function(){var e,u;return n(this,(function(n){switch(n.label){case 0:return(e=null===(o=r.style)||void 0===o?void 0:o.getPropertyValue(t))?[4,q(e,null,i)]:[3,2];case 1:return u=n.sent(),r.style.setProperty(t,u,r.style.getPropertyPriority(t)),[2,!0];case 2:return[2,!1]}}))}))}function j(t,r){return e(this,void 0,void 0,(function(){var e,i;return n(this,(function(n){switch(n.label){case 0:return[4,U("background",t,r)];case 1:return n.sent()?[3,3]:[4,U("background-image",t,r)];case 2:n.sent(),n.label=3;case 3:return[4,U("mask",t,r)];case 4:return(i=n.sent())?[3,6]:[4,U("-webkit-mask",t,r)];case 5:i=n.sent(),n.label=6;case 6:return(e=i)?[3,8]:[4,U("mask-image",t,r)];case 7:e=n.sent(),n.label=8;case 8:return e?[3,10]:[4,U("-webkit-mask-image",t,r)];case 9:n.sent(),n.label=10;case 10:return[2]}}))}))}function O(t,r){return e(this,void 0,void 0,(function(){var e,i,o;return n(this,(function(n){switch(n.label){case 0:return(e=p(t,HTMLImageElement))&&!E(t.src)||p(t,SVGImageElement)&&!E(t.href.baseVal)?[4,R(i=e?t.src:t.href.baseVal,S(i),r)]:[2];case 1:return o=n.sent(),[4,new Promise((function(n,i){t.onload=n,t.onerror=r.onImageErrorHandler?function(){for(var t=[],e=0;e<arguments.length;e++)t[e]=arguments[e];try{n(r.onImageErrorHandler.apply(r,t))}catch(t){i(t)}}:i;var u=t;u.decode&&(u.decode=n),"lazy"===u.loading&&(u.loading="eager"),e?(t.srcset="",t.src=o):t.href.baseVal=o}))];case 2:return n.sent(),[2]}}))}))}function B(t,r){return e(this,void 0,void 0,(function(){var e,i;return n(this,(function(n){switch(n.label){case 0:return e=o(t.childNodes),i=e.map((function(t){return z(t,r)})),[4,Promise.all(i).then((function(){return t}))];case 1:return n.sent(),[2]}}))}))}function z(t,r){return e(this,void 0,void 0,(function(){return n(this,(function(e){switch(e.label){case 0:return p(t,Element)?[4,j(t,r)]:[3,4];case 1:return e.sent(),[4,O(t,r)];case 2:return e.sent(),[4,B(t,r)];case 3:e.sent(),e.label=4;case 4:return[2]}}))}))}var W={};function $(t){return e(this,void 0,void 0,(function(){var e,r;return n(this,(function(n){switch(n.label){case 0:return null!=(e=W[t])?[2,e]:[4,fetch(t)];case 1:return[4,n.sent().text()];case 2:return r=n.sent(),e={url:t,cssText:r},W[t]=e,[2,e]}}))}))}function G(t,r){return e(this,void 0,void 0,(function(){var i,o,u,c,a=this;return n(this,(function(s){return i=t.cssText,o=/url\(["']?([^"')]+)["']?\)/g,u=i.match(/url\([^)]+\)/g)||[],c=u.map((function(u){return e(a,void 0,void 0,(function(){var e;return n(this,(function(n){return(e=u.replace(o,"$1")).startsWith("https://")||(e=new URL(e,t.url).href),[2,C(e,r.fetchRequestInit,(function(t){var e=t.result;return i=i.replace(u,"url(".concat(e,")")),[u,e]}))]}))}))})),[2,Promise.all(c).then((function(){return i}))]}))}))}function _(t){if(null==t)return[];for(var e=[],n=t.replace(/(\/\*[\s\S]*?\*\/)/gi,""),r=new RegExp("((@.*?keyframes [\\s\\S]*?){([\\s\\S]*?}\\s*?)})","gi");;){if(null===(u=r.exec(n)))break;e.push(u[0])}n=n.replace(r,"");for(var i=/@import[\s\S]*?url\([^)]*\)[\s\S]*?;/gi,o=new RegExp("((\\s*?(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*?@media[\\s\\S]*?){([\\s\\S]*?)}\\s*?})|(([\\s\\S]*?){([\\s\\S]*?)})","gi");;){var u;if(null===(u=i.exec(n))){if(null===(u=o.exec(n)))break;i.lastIndex=o.lastIndex}else o.lastIndex=i.lastIndex;e.push(u[0])}return e}function J(t,r){return e(this,void 0,void 0,(function(){var e,i;return n(this,(function(n){return e=[],i=[],t.forEach((function(e){if("cssRules"in e)try{o(e.cssRules||[]).forEach((function(t,n){if(t.type===CSSRule.IMPORT_RULE){var o=n+1,u=$(t.href).then((function(t){return G(t,r)})).then((function(t){return _(t).forEach((function(t){try{e.insertRule(t,t.startsWith("@import")?o+=1:e.cssRules.length)}catch(e){console.error("Error inserting rule from remote css",{rule:t,error:e})}}))})).catch((function(t){console.error("Error loading remote css",t.toString())}));i.push(u)}}))}catch(o){var n=t.find((function(t){return null==t.href}))||document.styleSheets[0];null!=e.href&&i.push($(e.href).then((function(t){return G(t,r)})).then((function(t){return _(t).forEach((function(t){n.insertRule(t,n.cssRules.length)}))})).catch((function(t){console.error("Error loading remote stylesheet",t)}))),console.error("Error inlining remote css file",o)}})),[2,Promise.all(i).then((function(){return t.forEach((function(t){if("cssRules"in t)try{o(t.cssRules||[]).forEach((function(t){e.push(t)}))}catch(e){console.error("Error while reading CSS rules from ".concat(t.href),e)}})),e}))]}))}))}function Q(t){return t.filter((function(t){return t.type===CSSRule.FONT_FACE_RULE})).filter((function(t){return V(t.style.getPropertyValue("src"))}))}function X(t,r){return e(this,void 0,void 0,(function(){return n(this,(function(e){switch(e.label){case 0:if(null==t.ownerDocument)throw new Error("Provided element is not within a Document");return[4,J(o(t.ownerDocument.styleSheets),r)];case 1:return[2,Q(e.sent())]}}))}))}function K(t){return t.trim().replace(/["']/g,"")}function Y(t,r){return e(this,void 0,void 0,(function(){var e,i;return n(this,(function(n){switch(n.label){case 0:return[4,X(t,r)];case 1:return e=n.sent(),i=function(t){var e=new Set;return function t(n){(n.style.fontFamily||getComputedStyle(n).fontFamily).split(",").forEach((function(t){e.add(K(t))})),Array.from(n.children).forEach((function(e){e instanceof HTMLElement&&t(e)}))}(t),e}(t),[4,Promise.all(e.filter((function(t){return i.has(K(t.style.fontFamily))})).map((function(t){var e=t.parentStyleSheet?t.parentStyleSheet.href:null;return q(t.cssText,e,r)})))];case 2:return[2,n.sent().join("\n")]}}))}))}function Z(t,r){return e(this,void 0,void 0,(function(){var e,i,o,u,c;return n(this,(function(n){switch(n.label){case 0:return null==r.fontEmbedCSS?[3,1]:(i=r.fontEmbedCSS,[3,5]);case 1:return r.skipFonts?(o=null,[3,4]):[3,2];case 2:return[4,Y(t,r)];case 3:o=n.sent(),n.label=4;case 4:i=o,n.label=5;case 5:return(e=i)&&(u=document.createElement("style"),c=document.createTextNode(e),u.appendChild(c),t.firstChild?t.insertBefore(u,t.firstChild):t.appendChild(u)),[2]}}))}))}function tt(t,r){return void 0===r&&(r={}),e(this,void 0,void 0,(function(){var e,i,o,u;return n(this,(function(n){switch(n.label){case 0:return e=s(t,r),i=e.width,o=e.height,[4,I(t,r,!0)];case 1:return[4,Z(u=n.sent(),r)];case 2:return n.sent(),[4,z(u,r)];case 3:return n.sent(),function(t,e){var n=t.style;e.backgroundColor&&(n.backgroundColor=e.backgroundColor),e.width&&(n.width="".concat(e.width,"px")),e.height&&(n.height="".concat(e.height,"px"));var r=e.style;null!=r&&Object.keys(r).forEach((function(t){n[t]=r[t]}))}(u,r),[4,v(u,i,o)];case 4:return[2,n.sent()]}}))}))}function et(t,r){return void 0===r&&(r={}),e(this,void 0,void 0,(function(){var e,i,o,u,c,a,f,d,v;return n(this,(function(n){switch(n.label){case 0:return e=s(t,r),i=e.width,o=e.height,[4,tt(t,r)];case 1:return[4,h(n.sent())];case 2:return u=n.sent(),c=document.createElement("canvas"),a=c.getContext("2d"),f=r.pixelRatio||function(){var t,e;try{e=process}catch(t){}var n=e&&e.env?e.env.devicePixelRatio:null;return n&&(t=parseInt(n,10),Number.isNaN(t)&&(t=1)),t||window.devicePixelRatio||1}(),d=r.canvasWidth||i,v=r.canvasHeight||o,c.width=d*f,c.height=v*f,r.skipAutoScale||function(t){(t.width>l||t.height>l)&&(t.width>l&&t.height>l?t.width>t.height?(t.height*=l/t.width,t.width=l):(t.width*=l/t.height,t.height=l):t.width>l?(t.height*=l/t.width,t.width=l):(t.width*=l/t.height,t.height=l))}(c),c.style.width="".concat(d),c.style.height="".concat(v),r.backgroundColor&&(a.fillStyle=r.backgroundColor,a.fillRect(0,0,c.width,c.height)),a.drawImage(u,0,0,c.width,c.height),[2,c]}}))}))}t.getFontEmbedCSS=function(t,r){return void 0===r&&(r={}),e(this,void 0,void 0,(function(){return n(this,(function(e){return[2,Y(t,r)]}))}))},t.toBlob=function(t,r){return void 0===r&&(r={}),e(this,void 0,void 0,(function(){return n(this,(function(e){switch(e.label){case 0:return[4,et(t,r)];case 1:return[4,f(e.sent())];case 2:return[2,e.sent()]}}))}))},t.toCanvas=et,t.toJpeg=function(t,r){return void 0===r&&(r={}),e(this,void 0,void 0,(function(){return n(this,(function(e){switch(e.label){case 0:return[4,et(t,r)];case 1:return[2,e.sent().toDataURL("image/jpeg",r.quality||1)]}}))}))},t.toPixelData=function(t,r){return void 0===r&&(r={}),e(this,void 0,void 0,(function(){var e,i,o,u;return n(this,(function(n){switch(n.label){case 0:return e=s(t,r),i=e.width,o=e.height,[4,et(t,r)];case 1:return u=n.sent(),[2,u.getContext("2d").getImageData(0,0,i,o).data]}}))}))},t.toPng=function(t,r){return void 0===r&&(r={}),e(this,void 0,void 0,(function(){return n(this,(function(e){switch(e.label){case 0:return[4,et(t,r)];case 1:return[2,e.sent().toDataURL()]}}))}))},t.toSvg=tt}));
+ return exports; })();
+const CSS_OUTIL = ":host { all: initial; }* { box-sizing: border-box; }[hidden] { display: none !important; }:where(.r), :where(.r) :where(*) { font: 15px/1.4 var(--police, system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif); color: var(--txt); -webkit-tap-highlight-color: transparent; }.r {--fond: #1D2024; --fond2: #262A2F; --fond3: #30353B; --trait: #3C434B;--txt: #EEF0F2; --doux: #AEB4BC; --acc: #FFB224; --acc-enc: #1B1400;--ok: #46D68E; --err: #FF7070; --bleu: #8AB8FF;--mono: ui-monospace, \"SF Mono\", \"Cascadia Mono\", Menlo, Consolas, monospace;--rayon: 16px; --ombre: 0 18px 50px rgba(0,0,0,.45), 0 2px 8px rgba(0,0,0,.3);}button { cursor: pointer; border: 0; background: none; padding: 0; margin: 0; }button:focus-visible, textarea:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }small, .doux { color: var(--doux); font-size: 13px; }.mono { font-family: var(--mono) !important; font-size: 12.5px; }.btn { min-height: 44px; padding: 0 16px; border-radius: 12px; background: var(--fond3); color: var(--txt); font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: background .15s, transform .1s; }.btn:hover { filter: brightness(1.12); }.r[data-theme=\"clair\"] .btn:hover { filter: brightness(.95); }.btn:active { transform: scale(.98); }.btn.prim { background: var(--acc); color: var(--acc-enc); }.btn.prim:hover { filter: brightness(1.08); }.btn.prim * { color: var(--acc-enc); }.btn.danger { color: var(--err); }.btn.petit { min-height: 36px; padding: 0 12px; font-size: 14px; border-radius: 10px; }.btn[disabled] { opacity: .45; pointer-events: none; }.ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; color: var(--doux); flex: none; }.ic:hover { background: var(--fond3); color: var(--txt); }.menu-aide { margin: 4px 8px 6px; font-size: 13px; color: var(--doux); max-width: 260px; }.menu-aide b { display: block; color: var(--txt); font-weight: 700; }.segment.large { display: flex; } .segment.large button { flex: 1; }.ic svg, .btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }.bulle { position: fixed; right: 12px; top: 58%; width: 56px; height: 56px; border-radius: 50%; background: var(--fond); color: var(--acc); display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,.35), 0 0 0 2px color-mix(in srgb, var(--acc) 60%, transparent); pointer-events: auto; touch-action: none; user-select: none; -webkit-user-select: none; transition: transform .15s, box-shadow .15s; z-index: 3; }.bulle svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }.bulle .compte { position: absolute; top: -5px; right: -5px; min-width: 22px; height: 22px; border-radius: 11px; background: var(--acc); color: var(--acc-enc) !important; font: 700 12px/22px system-ui, sans-serif; font-style: normal; text-align: center; padding: 0 6px; box-shadow: 0 0 0 2px var(--fond); }.bulle .compte:empty { display: none; }.bulle .etat { position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: var(--err); color: #fff; font: 800 10px/16px system-ui, sans-serif; letter-spacing: .06em; padding: 0 6px; border-radius: 8px; white-space: nowrap; }.bulle .etat:empty { display: none; }.bulle.rec { color: #fff; background: #B3261E; box-shadow: 0 0 0 2px #FF8A80, 0 8px 24px rgba(0,0,0,.35); animation: pulse 1.6s ease-in-out infinite; }.bulle.glisse { transform: scale(1.1); box-shadow: 0 16px 34px rgba(0,0,0,.5), 0 0 0 2px var(--acc); }@keyframes pulse { 50% { box-shadow: 0 0 0 8px rgba(255,112,112,.25), 0 8px 24px rgba(0,0,0,.35); } }.pnl { position: fixed; left: 0; right: 0; bottom: 0; max-height: 82vh; background: var(--fond); border-radius: 20px 20px 0 0; box-shadow: var(--ombre); display: flex; flex-direction: column; pointer-events: auto; z-index: 4; padding-bottom: env(safe-area-inset-bottom, 0); animation: monte .22s ease-out; }@keyframes monte { from { transform: translateY(24px); opacity: 0; } }@media (min-width: 720px) {.pnl { left: auto; right: 24px; bottom: 24px; width: 420px; max-height: min(78vh, 720px); border-radius: var(--rayon); border: 1px solid var(--trait); }.pnl .poignee { display: none; }}.tete { display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 16px; border-bottom: 1px solid var(--trait); position: relative; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; flex: none; }.poignee { position: absolute; top: 6px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 2px; background: var(--trait); }.titres { flex: 1; min-width: 0; display: flex; flex-direction: column; padding-top: 6px; }.titres b { font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }.titres small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }.onglets { display: flex; gap: 2px; background: var(--fond2); border-radius: 12px; padding: 3px; }.onglets button { min-height: 38px; min-width: 44px; padding: 0 10px; border-radius: 9px; color: var(--doux); font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }.onglets button[aria-selected=\"true\"] { background: var(--fond3); color: var(--txt); }.onglets i { font-style: normal; min-width: 20px; height: 20px; border-radius: 10px; background: var(--acc); color: var(--acc-enc); font: 700 11px/20px system-ui, sans-serif; text-align: center; padding: 0 5px; }.onglets i:empty { display: none; }.onglets svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }.vue { padding: 14px 16px 16px; overflow: auto; display: flex; flex-direction: column; gap: 12px; min-height: 0; flex: 1 1 auto; overscroll-behavior: contain; }.outils { display: flex; gap: 6px; }.outils.vide { display: none; }.outils button { flex: 1 1 0; min-width: 0; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; min-height: 62px; border-radius: 12px; background: var(--fond2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--txt); transition: background .15s; }.outils button:hover { background: var(--fond3); }.outils button span { font-size: 12.5px; font-weight: 600; color: var(--doux); }.outils button svg { width: 24px; height: 24px; fill: none; stroke: var(--acc); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }.outils button.on { background: #B3261E; }.outils button.on svg { stroke: #fff; } .outils button.on span { color: #fff; }.pieces { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }.pieces:empty { display: none; }.piece { display: flex; align-items: center; gap: 10px; background: var(--fond2); border: 1px solid var(--trait); border-radius: 12px; padding: 6px 4px 6px 6px; }.piece img, .piece .pic { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; background: var(--fond3); flex: none; display: grid; place-items: center; color: var(--acc); }.piece .pic svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }.piece .pt { flex: 1; min-width: 0; display: flex; flex-direction: column; }.piece .pt b { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }.piece .pt small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }textarea, input[type=text] { width: 100%; background: var(--fond2); border: 1px solid var(--trait); border-radius: 12px; padding: 12px 14px; color: var(--txt); font-size: 16px; resize: vertical; min-height: 48px; }textarea { min-height: 96px; }textarea::placeholder, input::placeholder { color: #858C95; }textarea:focus, input[type=text]:focus { border-color: var(--acc); outline: none; }.pied { display: flex; align-items: center; gap: 10px; }.pied .msg { flex: 1; margin: 0; font-size: 13px; color: var(--doux); }.pied .btn.prim { flex: none; min-width: 180px; margin-left: auto; }.msg { margin: 0; font-size: 13px; color: var(--doux); }.msg:empty { display: none; }.outils-pied { display: flex; gap: 6px; }.outils-pied.vide { display: none; }.outils-pied button { width: 48px; height: 48px; border-radius: 12px; background: var(--fond2); display: grid; place-items: center; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }.outils-pied button:hover { background: var(--fond3); }.outils-pied button span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }.outils-pied button svg { width: 24px; height: 24px; fill: none; stroke: var(--acc); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }.outils-pied button.on { background: #B3261E; } .outils-pied button.on svg { stroke: #fff; }.filtres { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }.puce { min-height: 36px; padding: 0 12px; border-radius: 18px; background: var(--fond2); border: 1px solid var(--trait); color: var(--doux); font-size: 14px; font-weight: 600; }.puce[aria-pressed=\"true\"] { background: var(--txt); color: var(--fond); border-color: var(--txt); }.filtres .btn { margin-left: auto; }.liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }.note { background: var(--fond2); border: 1px solid var(--trait); border-radius: 14px; padding: 10px 6px 10px 12px; display: grid; grid-template-columns: 1fr auto; gap: 4px 6px; position: relative; }.note.val { opacity: .72; }.note .meta { font-size: 12.5px; color: var(--doux); display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }.note .txt { grid-column: 1; white-space: pre-wrap; word-break: break-word; }.note .act { grid-row: 1 / span 3; grid-column: 2; align-self: start; }.note .mini { grid-column: 1; display: flex; gap: 6px; flex-wrap: wrap; }.note .mini img { width: 84px; height: 56px; object-fit: cover; border-radius: 8px; border: 1px solid var(--trait); }.tag { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; background: var(--fond3); color: var(--txt); }.tag.ok { background: rgba(70,214,142,.15); color: var(--ok); }.tag.re { background: rgba(255,112,112,.15); color: var(--err); }.det { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; border-top: 1px dashed var(--trait); padding-top: 8px; margin-top: 4px; }.det .bloc { background: var(--fond); border-radius: 10px; padding: 8px 10px; font-size: 13.5px; }.det .bloc b { font-weight: 700; }.det .bloc code, .det code { font-family: var(--mono); font-size: 12px; color: var(--bleu); word-break: break-all; }.det img { max-width: 100%; border-radius: 10px; border: 1px solid var(--trait); }.vide { text-align: center; color: var(--doux); padding: 28px 8px; }.vide b { display: block; color: var(--txt); font-size: 16px; margin-bottom: 4px; }.verif { background: var(--fond2); border: 1px solid var(--acc); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }.verif .txt { white-space: pre-wrap; font-size: 16px; }.verif img { max-width: 100%; border-radius: 10px; }.trois { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 8px; }.barre-prog { height: 4px; border-radius: 2px; background: var(--fond3); overflow: hidden; }.barre-prog i { display: block; height: 100%; background: var(--acc); }.menu3 { position: fixed; min-width: 230px; background: var(--fond2); border: 1px solid var(--trait); border-radius: 14px; box-shadow: var(--ombre); padding: 6px; display: flex; flex-direction: column; pointer-events: auto; z-index: 6; }.menu3 button { min-height: 44px; text-align: left; padding: 0 12px; border-radius: 10px; font-weight: 500; }.menu3 button:hover { background: var(--fond3); }.menu3 button.danger { color: var(--err); }.sec { display: flex; flex-direction: column; gap: 8px; }.sec h3 { margin: 4px 0 0; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--doux); font-weight: 700; }.ligne { display: flex; align-items: center; gap: 12px; background: var(--fond2); border-radius: 12px; padding: 10px 12px; min-height: 56px; }.ligne > span { flex: 1; display: flex; flex-direction: column; }.ligne b { font-weight: 600; }.bascule { width: 52px; height: 32px; border-radius: 16px; background: var(--fond3); position: relative; flex: none; transition: background .15s; }.bascule::after { content: \"\"; position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: #C9CED4; transition: transform .18s ease-out, background .18s; }.bascule[aria-checked=\"true\"] { background: var(--acc); }.bascule[aria-checked=\"true\"]::after { transform: translateX(20px); background: var(--acc-enc); }.grille2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }.grille2 .btn { justify-content: flex-start; }.info { font-family: var(--mono); font-size: 12px; color: var(--doux); line-height: 1.6; }.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0)); transform: translateX(-50%); width: max-content; max-width: min(92vw, 460px); background: var(--txt); color: var(--fond); border-radius: 14px; padding: 10px 10px 10px 16px; box-shadow: var(--ombre); display: flex; align-items: center; gap: 12px; pointer-events: auto; z-index: 9; animation: monte .2s ease-out; }.toast, .toast * { color: var(--fond); }.toast span { flex: 1; font-size: 14.5px; }.toast button { min-height: 36px; padding: 0 12px; border-radius: 10px; font-weight: 700; color: var(--acc-enc) !important; background: var(--acc); }.calque { position: fixed; inset: 0; pointer-events: none; z-index: 5; }.calque.bloque { pointer-events: auto; }.calque canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }.barre { position: absolute; left: 8px; right: 8px; display: flex; align-items: center; gap: 8px; background: var(--fond); border-radius: 16px; padding: 6px; box-shadow: var(--ombre); pointer-events: auto; flex-wrap: wrap; }.barre.haut { top: calc(8px + env(safe-area-inset-top, 0)); }.barre.bas { bottom: calc(8px + env(safe-area-inset-bottom, 0)); }@media (min-width: 720px) { .barre { left: 50%; right: auto; transform: translateX(-50%); max-width: 760px; } }.barre .tt { flex: 1; min-width: 120px; padding: 0 6px; display: flex; flex-direction: column; }.barre .tt b { font-weight: 700; font-size: 14.5px; }.barre .tt small { font-size: 12.5px; }.formes { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; justify-content: center; }.formes button { min-width: 48px; min-height: 48px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: var(--doux); padding: 0 6px; }.formes button span { font-size: 11px; font-weight: 600; }.formes button[aria-pressed=\"true\"] { background: var(--fond3); color: var(--txt); box-shadow: inset 0 -2px 0 var(--acc); }.formes svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }.couleurs { display: flex; gap: 6px; padding: 0 4px; }.couleurs button { width: 32px; height: 32px; border-radius: 50%; border: 3px solid transparent; }.couleurs button[aria-pressed=\"true\"] { border-color: var(--txt); }.sep { width: 1px; align-self: stretch; background: var(--trait); margin: 4px 2px; }.attente { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--doux); }.attente::before { content: \"\"; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--doux); border-top-color: transparent; animation: tourne .8s linear infinite; }@keyframes tourne { to { transform: rotate(360deg); } }.consigne { position: absolute; left: 50%; transform: translateX(-50%); width: min(92vw, 440px); background: var(--fond); border-radius: 16px; padding: 12px; box-shadow: var(--ombre); display: flex; flex-direction: column; gap: 8px; pointer-events: auto; }.consigne .rang { display: flex; gap: 8px; }.consigne .rang input { flex: 1; }.numero { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--acc); color: var(--acc-enc) !important; font-weight: 800; font-size: 13px; margin-right: 6px; }.cadre { position: absolute; border: 2px solid var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); border-radius: 4px; pointer-events: none; transition: all .08s ease-out; box-shadow: 0 0 0 9999px rgba(0,0,0,.18); }.cadre .etq { position: absolute; left: -2px; bottom: 100%; margin-bottom: 4px; background: var(--fond); color: var(--txt); font: 600 12px/1.3 var(--mono); padding: 3px 7px; border-radius: 6px; white-space: nowrap; max-width: 80vw; overflow: hidden; text-overflow: ellipsis; }.cadre.bas .etq { bottom: auto; top: 100%; margin: 4px 0 0; }.surligne { position: absolute; background: color-mix(in srgb, var(--acc) 35%, transparent); border-bottom: 2px solid var(--acc); pointer-events: none; }.grillev { position: absolute; inset: 0; pointer-events: none; }.resultat { display: flex; flex-direction: column; gap: 6px; font-size: 14px; }.nuance { display: inline-flex; align-items: center; gap: 8px; }.nuance i { width: 22px; height: 22px; border-radius: 6px; border: 1px solid rgba(255,255,255,.3); display: inline-block; }@media (prefers-reduced-motion: reduce) { .r *, .r *::before, .r *::after { animation: none !important; transition: none !important; } }.toast.haut { bottom: auto; top: calc(92px + env(safe-area-inset-top, 0)); }.calque .barre { transition: opacity .15s; }.calque.dessin .barre, .calque.dessin .consigne { opacity: .12; pointer-events: none; }.coupe-debut { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; direction: rtl; text-align: left; }.zf { position: fixed; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 2; opacity: 0; transition: opacity .18s, transform .18s; }.zf.pres { opacity: calc(.55 + .45 * var(--p, 0)); }.zf, .zf * { color: #fff; }.zf-in { position: absolute; left: 0; right: 0; bottom: calc(var(--e, 1) * 22px); display: flex; flex-direction: column; align-items: center; gap: calc(var(--e, 1) * 4px); }.zf-in span { width: calc(var(--e, 1) * 46px); height: calc(var(--e, 1) * 46px); border-radius: 50%; border: calc(var(--e, 1) * 2px) solid rgba(255,255,255,.9); display: grid; place-items: center; font-size: calc(var(--e, 1) * 18px); line-height: 1; transition: transform .15s, background .15s; }.zf-in b, .zf-lib, .zf-coin b { font: 700 calc(var(--e, 1) * 14px)/1.2 system-ui, sans-serif; text-shadow: 0 1px 3px rgba(0,0,0,.4); white-space: nowrap; }.zf.chaud .zf-in span, .apercu[data-phase=\"2\"] .zf-in span { transform: scale(1.18); background: rgba(255,255,255,.25); }.zf[data-style=\"bande\"] { height: calc(var(--e, 1) * 110px); background: linear-gradient(to top, rgba(30,30,35,.62), rgba(30,30,35,.12)); }.zf[data-style=\"bande\"].chaud, .apercu[data-phase=\"2\"] .zf[data-style=\"bande\"] { background: linear-gradient(to top, rgba(160,24,24,.7), rgba(160,24,24,.18)); }.zf[data-style=\"vague\"] { height: calc(var(--e, 1) * 160px); transform: translateY(calc(var(--e, 1) * 40px * (1 - var(--p, 0)))); }.zf[data-style=\"vague\"] svg { position: absolute; inset: 0; width: 100%; height: 100%; }.zf[data-style=\"vague\"] path { fill: rgba(20,22,26,.62); transition: fill .15s; }.zf[data-style=\"vague\"].chaud path, .apercu[data-phase=\"2\"] .zf[data-style=\"vague\"] path { fill: rgba(170,30,30,.75); }.zf[data-style=\"cible\"] { height: calc(var(--e, 1) * 230px); background: radial-gradient(ellipse at 50% 100%, rgba(20,22,26,.55), transparent 70%); }.zf-cible { position: absolute; left: 50%; bottom: calc(var(--e, 1) * 70px); width: calc(var(--e, 1) * 72px); height: calc(var(--e, 1) * 72px); margin-left: calc(var(--e, 1) * -36px); border-radius: 50%; border: calc(var(--e, 1) * 3px) solid rgba(255,255,255,.9); background: rgba(20,22,26,.4); display: grid; place-items: center; font-size: calc(var(--e, 1) * 24px); line-height: 1; transition: transform .15s, background .15s; }.zf.chaud .zf-cible, .apercu[data-phase=\"2\"] .zf-cible { transform: scale(1.25); background: #C62828; }.zf-lib { position: absolute; left: 0; right: 0; bottom: calc(var(--e, 1) * 34px); text-align: center; }.zf[data-style=\"coin\"] { left: auto; width: calc(var(--e, 1) * 160px); height: calc(var(--e, 1) * 160px); }.zf-coin { position: absolute; inset: 0; border-top-left-radius: 100%; background: rgba(20,22,26,.72); display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; gap: calc(var(--e, 1) * 4px); padding: calc(var(--e, 1) * 24px); transform-origin: 100% 100%; transition: transform .15s, background .15s; }.zf-coin svg { width: calc(var(--e, 1) * 30px); height: calc(var(--e, 1) * 30px); fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }.zf.chaud .zf-coin, .apercu[data-phase=\"2\"] .zf-coin { transform: scale(1.15); background: #C62828; }.bulle[data-taille=\"petite\"] { width: 44px; height: 44px; } .bulle[data-taille=\"petite\"] svg { width: 22px; height: 22px; }.bulle[data-taille=\"grande\"] { width: 68px; height: 68px; } .bulle[data-taille=\"grande\"] svg { width: 34px; height: 34px; }.zoneMasquer { position: absolute; left: 8px; right: 8px; top: 6px; height: 54px; z-index: 3; background: var(--fond); border: 2px dashed var(--err); color: var(--err); border-radius: 12px; min-height: 48px; display: grid; place-items: center; font-weight: 600; font-size: 14px; transition: background .15s; }.zoneMasquer.chaud { background: color-mix(in srgb, var(--err) 18%, var(--fond)); }.reorg .outils, .reorg .outils-pied { outline: 2px dashed var(--acc); outline-offset: 4px; border-radius: 14px; }.reorg .outils.vide { display: flex; min-height: 62px; }.reorg .outils-pied.vide { display: flex; min-width: 110px; min-height: 48px; flex: 1; }.reorg .outils-pied { flex: 1; }.reorg .outils.vide::after, .reorg .outils-pied.vide::after { content: \"Dépose ici\"; margin: auto; color: var(--doux); font-size: 13px; }.enDeplacement { opacity: .3; }.repere { display: block; flex: none; width: 4px; align-self: stretch; min-height: 44px; border-radius: 2px; background: var(--acc); font-style: normal; }.fantome { position: fixed; z-index: 10; width: 64px; height: 62px; margin: -31px 0 0 -32px; border-radius: 12px; background: var(--fond3); box-shadow: var(--ombre); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; pointer-events: none; transform: scale(1.08); }.fantome svg { width: 24px; height: 24px; fill: none; stroke: var(--acc); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }.fantome span { font-size: 12px; font-weight: 600; color: var(--doux); }.cartesF { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }.carteF { text-align: left; background: var(--fond2); border: 2px solid transparent; border-radius: 14px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }.carteF[aria-checked=\"true\"] { border-color: var(--acc); }.carteF-t { display: flex; align-items: center; justify-content: space-between; gap: 6px; }.carteF-t b { font-weight: 700; }.carteF-t em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--acc); }.carteF small { font-size: 12.5px; line-height: 1.35; }.apercu { --e: .42; position: relative; height: 120px; border-radius: 10px; overflow: hidden; background: #E9ECF0; display: block; }.apercu .faux { position: absolute; inset: 10px; display: flex; flex-direction: column; gap: 7px; }.apercu .faux i { display: block; height: 10px; border-radius: 5px; background: #D3D8DF; }.apercu .faux i:nth-child(1) { width: 60%; height: 12px; background: #C3C9D1; } .apercu .faux i:nth-child(3) { width: 80%; } .apercu .faux i:nth-child(4) { width: 45%; }.apercu .zf { position: absolute; transition: opacity .45s, transform .45s; }.apercu[data-phase=\"1\"] .zf { opacity: .7; --p: .5; }.apercu[data-phase=\"2\"] .zf { opacity: 1; --p: 1; }.apercu .ab { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; background: #1D2024; box-shadow: 0 0 0 2px color-mix(in srgb, var(--acc) 70%, transparent), 0 3px 8px rgba(0,0,0,.3); left: 72%; top: 22%; transition: left .7s ease-in-out, top .7s ease-in-out, transform .3s, opacity .3s; z-index: 3; }.apercu[data-phase=\"1\"] .ab { left: 60%; top: 55%; }.apercu[data-phase=\"2\"] .ab { left: var(--tx, 50%); top: var(--ty, 82%); }.apercu[data-phase=\"3\"] .ab { left: var(--tx, 50%); top: var(--ty, 82%); transform: scale(0); opacity: 0; }.apercu[data-style=\"cible\"] { --ty: 70%; }.apercu[data-style=\"coin\"] { --tx: 88%; --ty: 86%; }.apercu[data-style=\"aucune\"] .ab { transition: left .9s, top .9s; }.apercu[data-style=\"aucune\"][data-phase=\"2\"] .ab, .apercu[data-style=\"aucune\"][data-phase=\"3\"] .ab { left: 25%; top: 75%; transform: none; opacity: 1; }.segment { display: inline-flex; background: var(--fond); border-radius: 10px; padding: 3px; gap: 2px; flex: none; }.segment button { min-height: 38px; padding: 0 10px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--doux); }.segment button[aria-checked=\"true\"] { background: var(--fond3); color: var(--txt); box-shadow: inset 0 -2px 0 var(--acc); }.ligneOutil { gap: 10px; }.ligneOutil b { flex: 1; }.ligneOutil .pic { width: 32px; height: 32px; display: grid; place-items: center; flex: none; }.ligneOutil .pic svg { width: 22px; height: 22px; fill: none; stroke: var(--acc); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }.zf.demo { z-index: 8; }.r[data-theme=\"clair\"] { --ok: #17733F; --err: #B42318; --bleu: #2B4A80; --ombre: 0 18px 50px rgba(0,0,0,.18), 0 2px 8px rgba(0,0,0,.1); }.r[data-theme=\"clair\"] .pnl { border: 1px solid var(--trait); }.r[data-theme=\"clair\"] textarea::placeholder, .r[data-theme=\"clair\"] input::placeholder { color: #80868F; }.r[data-theme=\"clair\"] .bascule::after { background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); }.r[data-theme=\"clair\"] .tag.ok { background: #E2F4E9; } .r[data-theme=\"clair\"] .tag.re { background: #FDE8E6; }.r[data-theme=\"clair\"] .puce[aria-pressed=\"true\"] { background: var(--txt); color: var(--fond); }.deplacable { touch-action: none; }.deplacable[data-deplace] { max-width: calc(100vw - 16px); }.poigneeB { flex: none; align-self: stretch; width: 18px; min-height: 36px; cursor: grab; opacity: .75; background-image: radial-gradient(circle, var(--doux) 1.4px, transparent 1.8px); background-size: 6px 6px; background-position: center; background-repeat: repeat; border-radius: 6px; margin: 2px 0 2px 2px; -webkit-mask: linear-gradient(#000 0 0) center / 12px 22px no-repeat; mask: linear-gradient(#000 0 0) center / 12px 22px no-repeat; }.consigne > .poigneeB { align-self: center; width: 40px; height: 5px; min-height: 0; margin: -2px 0 2px; border-radius: 3px; background: var(--trait); -webkit-mask: none; mask: none; opacity: 1; }.glisse-fen { cursor: grabbing; box-shadow: 0 24px 60px rgba(0,0,0,.4); }.glisse-fen .poigneeB { cursor: grabbing; }.barre-fixe { position: sticky; bottom: -16px; margin: 0 -16px -16px; padding: 10px 16px calc(14px + env(safe-area-inset-bottom, 0)); background: linear-gradient(to top, var(--fond) 75%, transparent); z-index: 2; }.btn.large { width: 100%; min-height: 52px; font-size: 16px; }.note .quand { font-weight: 800; color: var(--txt); font-variant-numeric: tabular-nums; }.note.en-edition { grid-template-columns: 1fr; }.edition { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; }.edition textarea { min-height: 140px; width: 100%; }.edition .pied { justify-content: flex-end; }.note.prise { transform: scale(1.02); box-shadow: var(--ombre); border-color: var(--acc); z-index: 3; position: relative; opacity: .96; }.tri .note:not(.prise) { transition: transform .12s; }.tri, .tri * { user-select: none; -webkit-user-select: none; }.verif-tete { display: flex; align-items: center; gap: 8px; }.verif-tete .verif-compte { margin-left: auto; font-size: 13px; color: var(--doux); font-variant-numeric: tabular-nums; }textarea#saisie { height: 112px; min-height: 112px; max-height: 40vh; overflow-y: auto; resize: none; }.edition textarea { height: 140px; max-height: 40vh; overflow-y: auto; resize: none; }";
+
+/* ===== 01-utilitaires.js ===== */
+/* =====================================================================
+   Utilitaires communs
+   ===================================================================== */
+
+// Réglages de l'intégration (complétés par Debogage.init)
+const CFG = {
+  projet: "",            // nom court du projet : « mon-appli »…
+  version: "",           // version de l'appli testée : « 2.19 »
+  ecran: null,           // () => "Saisie › étape montant" ; sinon détection automatique
+  etat: null,            // () => ({ periode, filtre… }) : instantané joint à chaque note
+  db: "auto",            // "auto" (base de l'artifact si dispo) | objet base | false (appareil seulement)
+  collection: "debugnotes",
+  bulle: true,           // bulle visible au démarrage (sauf si l'utilisateur l'a fermée)
+  langue: "fr-FR",
+  raccourci: true,       // Ctrl+Maj+D
+  partager: null,        // (nomFichier, texte) => … : partage natif (Android)
+  telecharger: null,     // (nomFichier, blob) => … : remplace le téléchargement par défaut
+  ecouter: null,         // async () => texte : reconnaissance vocale native (Android)
+  ignorer: "[data-debogage-ignorer]", // éléments jamais capturés (données sensibles)
+  surNote: null          // (note) => … : appelé après chaque nouvelle note
+};
+
+const iso = () => new Date().toISOString();
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const tronquer = (s, n) => { s = String(s == null ? "" : s); return s.length > n ? s.slice(0, n - 1) + "…" : s; };
+const borne = (v, a, b) => Math.max(a, Math.min(b, v));
+const attendre = ms => new Promise(r => setTimeout(r, ms));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+function fmtQuand(s) {
+  const d = new Date(s); if (isNaN(d)) return "";
+  const auj = new Date(); const memeJour = d.toDateString() === auj.toDateString();
+  const h = d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  return memeJour ? "Aujourd'hui " + h : d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }) + " " + h;
+}
+const fmtNb = n => String(Math.round(n * 10) / 10).replace(".", ",");
+
+// Stockage local, rangé par projet
+const cle = k => "debogage:" + (CFG.projet || location.pathname) + ":" + k;
+const local = {
+  lire(k, defaut) { try { const v = localStorage.getItem(cle(k)); return v == null ? defaut : JSON.parse(v); } catch (e) { return defaut; } },
+  ecrire(k, v) { try { if (v == null) localStorage.removeItem(cle(k)); else localStorage.setItem(cle(k), JSON.stringify(v)); } catch (e) {} }
+};
+
+// Couleurs
+function versHex(c) {
+  const m = String(c).match(/rgba?\(([^)]+)\)/); if (!m) return c;
+  const p = m[1].split(/[\s,\/]+/).filter(Boolean).map(Number);
+  const hex = "#" + p.slice(0, 3).map(x => Math.round(x).toString(16).padStart(2, "0")).join("");
+  return p.length > 3 && p[3] < 1 ? hex + " (" + Math.round(p[3] * 100) + " %)" : hex;
+}
+function rgbDe(c) {
+  const h = String(c || "").trim().match(/^#([0-9a-f]{6})$/i);
+  if (h) return { r: parseInt(h[1].slice(0, 2), 16), g: parseInt(h[1].slice(2, 4), 16), b: parseInt(h[1].slice(4, 6), 16), a: 1 };
+  const m = String(c).match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(/[\s,\/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+function luminance({ r, g, b }) { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); }
+function contraste(c1, c2) { const a = rgbDe(c1), b = rgbDe(c2); if (!a || !b) return null; const l1 = luminance(a), l2 = luminance(b); return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05); }
+
+// Fond réellement visible derrière un élément
+function fondEffectif(el) {
+  let n = el;
+  while (n && n.nodeType === 1) {
+    const c = getComputedStyle(n).backgroundColor, v = rgbDe(c);
+    if (v && v.a > 0.05) return c;
+    n = n.parentElement;
+  }
+  return "rgb(255, 255, 255)";
+}
+
+/* ---------- Décrire un élément de la page (pour Claude) ---------- */
+const idStable = id => id && !/\d{5,}|^[a-f0-9-]{16,}$/i.test(id);
+function selecteur(el) {
+  if (!el || el.nodeType !== 1) return "";
+  if (idStable(el.id)) return "#" + CSS.escape(el.id);
+  const parts = []; let n = el;
+  while (n && n.nodeType === 1 && n !== document.body && n !== document.documentElement && parts.length < 5) {
+    if (idStable(n.id)) { parts.unshift("#" + CSS.escape(n.id)); break; }
+    let p = n.tagName.toLowerCase();
+    const cls = [...n.classList].filter(c => c.length < 32 && !/^(on|active|open|hover|focus|is-|has-|js-)/.test(c)).slice(0, 2);
+    if (cls.length) p += "." + cls.map(c => CSS.escape(c)).join(".");
+    const par = n.parentElement;
+    if (par) { const memes = [...par.children].filter(c => c.tagName === n.tagName); if (memes.length > 1) p += ":nth-of-type(" + (memes.indexOf(n) + 1) + ")"; }
+    parts.unshift(p); n = n.parentElement;
+  }
+  return parts.join(" > ");
+}
+function texteDe(el, n) {
+  if (!el || el.nodeType !== 1) return "";
+  const a = el.getAttribute("aria-label") || el.getAttribute("title") || el.getAttribute("placeholder") || el.getAttribute("alt");
+  const t = a || (el.tagName === "INPUT" || el.tagName === "TEXTAREA" ? "" : (el.innerText || el.textContent || ""));
+  return tronquer(t.replace(/\s+/g, " ").trim(), n || 80);
+}
+function decrireCourt(el) {
+  if (!el || el.nodeType !== 1) return "";
+  const t = texteDe(el, 50);
+  return el.tagName.toLowerCase() + (t ? " « " + t + " »" : "") + (idStable(el.id) ? " #" + el.id : "");
+}
+function decrireElement(el) {
+  const r = el.getBoundingClientRect(), cs = getComputedStyle(el), fond = fondEffectif(el);
+  const ct = contraste(cs.color, fond);
+  return {
+    selecteur: selecteur(el), balise: el.tagName.toLowerCase(), texte: texteDe(el, 120),
+    role: el.getAttribute("role") || "",
+    taille: Math.round(r.width) + " × " + Math.round(r.height) + " px",
+    position: "x " + Math.round(r.left) + ", y " + Math.round(r.top),
+    styles: {
+      police: cs.fontSize + " " + cs.fontWeight + " " + cs.fontFamily.split(",")[0].replace(/["']/g, ""),
+      couleur: versHex(cs.color), fond: versHex(fond),
+      contraste: ct ? fmtNb(ct) + ":1" + (ct < 4.5 ? " (insuffisant, viser 4,5:1)" : "") : "",
+      marges: cs.margin, retraits: cs.padding,
+      bordure: cs.borderTopWidth !== "0px" ? cs.borderTopWidth + " " + cs.borderTopStyle + " " + versHex(cs.borderTopColor) : "",
+      rayon: cs.borderRadius !== "0px" ? cs.borderRadius : ""
+    }
+  };
+}
+
+/* ---------- Ce qui se trouve dans une zone de l'écran ---------- */
+function elementSous(x, y) {
+  const liste = document.elementsFromPoint(x, y) || [];
+  return liste.find(e => e !== HOTE && !(HOTE && HOTE.contains(e)) && e !== document.documentElement && e !== document.body) || null;
+}
+function elementsDansZone(r) {
+  const vus = new Map(), pas = 6;
+  for (let i = 0; i <= pas; i++) for (let j = 0; j <= pas; j++) {
+    const x = r.x + r.w * (0.05 + 0.9 * i / pas), y = r.y + r.h * (0.05 + 0.9 * j / pas);
+    let e = elementSous(x, y); if (!e) continue;
+    // on remonte au premier élément qui porte du texte ou un rôle
+    let k = e; while (k && k !== document.body && !texteDe(k, 40) && !/^(BUTTON|A|INPUT|SELECT|IMG|SVG|CANVAS)$/.test(k.tagName)) k = k.parentElement;
+    if (k && k !== document.body) vus.set(k, (vus.get(k) || 0) + 1);
+  }
+  // les plus présents d'abord, sans garder un parent et son enfant
+  const tri = [...vus.entries()].sort((a, b) => b[1] - a[1]).map(x => x[0]);
+  const garde = [];
+  for (const e of tri) { if (garde.some(g => g.contains(e) || e.contains(g))) continue; garde.push(e); if (garde.length >= 6) break; }
+  return garde.map(e => ({ s: selecteur(e), t: decrireCourt(e) }));
+}
+
+// Téléchargement : hook de l'appli, capacité « downloads » d'un artifact, ou lien classique
+async function telecharger(nom, blob) {
+  if (CFG.telecharger) return CFG.telecharger(nom, blob);
+  try {
+    const dl = window.claude && window.claude.use ? await Promise.race([window.claude.use("downloads"), attendre(1500).then(() => null)]) : null;
+    if (dl) { await dl.save({ filename: nom, data: blob }); return true; }
+  } catch (e) { if (e && e.code === "declined") return false; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+  return true;
+}
+async function copier(texte) {
+  try { await navigator.clipboard.writeText(texte); return true; }
+  catch (e) {
+    const t = document.createElement("textarea"); t.value = texte; t.style.cssText = "position:fixed;opacity:0;top:0;left:0";
+    document.body.appendChild(t); t.select(); let ok = false; try { ok = document.execCommand("copy"); } catch (er) {} t.remove(); return ok;
+  }
+}
+
+/* ===== 02-contexte.js ===== */
+/* =====================================================================
+   Contexte technique joint automatiquement à chaque note :
+   erreurs JavaScript, parcours récent, appareil, état de l'appli
+   ===================================================================== */
+const CTX = { erreurs: [], parcours: [], dernierEcran: "", installe: false };
+const pousser = (tab, x, max) => { tab.push(x); if (tab.length > max) tab.splice(0, tab.length - max); };
+const fmtArg = a => { if (a instanceof Error) return a.message; if (typeof a === "object") { try { return JSON.stringify(a); } catch (e) { return String(a); } } return String(a); };
+
+function ecranCourant() {
+  if (typeof CFG.ecran === "function") { try { const s = CFG.ecran(); if (s) return tronquer(s, 120); } catch (e) {} }
+  // détection automatique : fenêtre ouverte, sinon onglet actif, sinon titre de la page
+  const visible = e => e && e.offsetParent !== null && !e.closest("[hidden]");
+  const dlg = [...document.querySelectorAll('[role="dialog"],[aria-modal="true"],dialog[open]')].filter(visible).pop();
+  const titreDlg = dlg && dlg.querySelector("h1,h2,h3,[class*=title],[class*=titre]");
+  const onglet = [...document.querySelectorAll('[role="tab"][aria-selected="true"],nav [aria-current="page"],.active[role="tab"]')].find(visible);
+  const parts = [];
+  if (onglet) parts.push(texteDe(onglet, 40));
+  if (titreDlg) parts.push(texteDe(titreDlg, 50));
+  if (!parts.length) { const h = [...document.querySelectorAll("h1,h2")].find(visible); if (h) parts.push(texteDe(h, 50)); }
+  if (location.hash && location.hash.length > 1 && location.hash.length < 40) parts.push(location.hash);
+  return parts.filter(Boolean).join(" › ") || document.title || "Accueil";
+}
+
+function appareil() {
+  const ua = navigator.userAgent;
+  const nav = /Edg\//.test(ua) ? "Edge" : /SamsungBrowser/.test(ua) ? "Samsung Internet" : /Chrome\//.test(ua) ? "Chrome" : /Firefox\//.test(ua) ? "Firefox" : /Safari\//.test(ua) ? "Safari" : "Navigateur";
+  const os = /Android/.test(ua) ? "Android" : /iPhone|iPad/.test(ua) ? "iOS" : /Windows/.test(ua) ? "Windows" : /Mac OS/.test(ua) ? "macOS" : /Linux/.test(ua) ? "Linux" : "";
+  const mq = q => window.matchMedia && matchMedia(q).matches;
+  return {
+    ecran: innerWidth + " × " + innerHeight, densite: Math.round((window.devicePixelRatio || 1) * 100) / 100,
+    orientation: innerWidth > innerHeight ? "paysage" : "portrait",
+    theme: mq("(prefers-color-scheme: dark)") ? "sombre" : "clair",
+    zoom: window.visualViewport ? Math.round(visualViewport.scale * 100) + " %" : "",
+    tactile: navigator.maxTouchPoints > 0, systeme: os, navigateur: nav,
+    webview: /; wv\)/.test(ua) || !!window.AndroidBridge, enLigne: navigator.onLine,
+    agent: ua.slice(0, 180)
+  };
+}
+
+function etatApp() {
+  if (typeof CFG.etat !== "function") return "";
+  try { const v = CFG.etat(); return v == null ? "" : tronquer(typeof v === "string" ? v : JSON.stringify(v), 3000); }
+  catch (e) { return "(lecture de l'état impossible : " + e.message + ")"; }
+}
+
+function contexteNote() {
+  const depuis = Date.now() - 10 * 60 * 1000; // erreurs des 10 dernières minutes
+  return {
+    erreurs: CTX.erreurs.filter(e => Date.parse(e.at) > depuis).slice(-8),
+    parcours: CTX.parcours.slice(-12),
+    appareil: appareil(),
+    etat: etatApp(),
+    url: location.href.split("#")[0].slice(0, 200) + (location.hash ? location.hash.slice(0, 60) : "")
+  };
+}
+
+function installerContexte() {
+  if (CTX.installe) return; CTX.installe = true;
+  addEventListener("error", e => {
+    const t = e.target;
+    if (t && t !== window && (t.src || t.href)) { pousser(CTX.erreurs, { at: iso(), type: "ressource", message: "Échec de chargement : " + tronquer(t.src || t.href, 160) }, 30); return; }
+    pousser(CTX.erreurs, { at: iso(), type: "erreur", message: tronquer(e.message, 300), source: ((e.filename || "").split("/").pop() || "page") + ":" + (e.lineno || 0) + ":" + (e.colno || 0), pile: e.error && e.error.stack ? tronquer(e.error.stack, 700) : "" }, 30);
+  }, true);
+  addEventListener("unhandledrejection", e => {
+    const r = e.reason;
+    pousser(CTX.erreurs, { at: iso(), type: "promesse rejetée", message: tronquer(r && r.message || fmtArg(r), 300), pile: r && r.stack ? tronquer(r.stack, 700) : "" }, 30);
+  });
+  ["error", "warn"].forEach(k => {
+    const orig = console[k];
+    console[k] = function (...a) {
+      try { pousser(CTX.erreurs, { at: iso(), type: "console." + k, message: tronquer(a.map(fmtArg).join(" "), 400) }, 30); } catch (e) {}
+      return orig.apply(this, a);
+    };
+  });
+  // parcours : clics et saisies (sans les valeurs tapées), changements d'écran
+  const deMoi = e => HOTE && e.composedPath && e.composedPath().includes(HOTE);
+  document.addEventListener("click", e => {
+    if (deMoi(e) || OUTIL.actif) return;
+    const t = e.target.closest ? (e.target.closest('button,a,[role="button"],[role="tab"],input,select,textarea,label,summary,[onclick],[data-go]') || e.target) : e.target;
+    pousser(CTX.parcours, { at: iso(), type: "clic", cible: decrireCourt(t), ecran: ecranCourant() }, 30);
+  }, true);
+  document.addEventListener("change", e => {
+    if (deMoi(e) || OUTIL.actif) return;
+    pousser(CTX.parcours, { at: iso(), type: "saisie", cible: decrireCourt(e.target) }, 30);
+  }, true);
+  const suivreEcran = () => { const s = ecranCourant(); if (s !== CTX.dernierEcran) { CTX.dernierEcran = s; pousser(CTX.parcours, { at: iso(), type: "écran", ecran: s }, 30); } };
+  setInterval(suivreEcran, 1000); addEventListener("hashchange", suivreEcran); addEventListener("popstate", suivreEcran);
+}
+
+/* ===== 03-stockage.js ===== */
+/* =====================================================================
+   Stockage des notes
+   - base de l'appli (artifact Claude : claude.use("db"), ou objet compatible
+     fourni par l'appli, comme le stockage en fichiers de l'APK Android) ;
+   - sinon cet appareil (localStorage).
+   Les notes prises hors ligne attendent sur l'appareil puis partent dans la base.
+   Les captures sont gardées dans IndexedDB (et envoyées dans les fichiers
+   de l'artifact quand la capacité « assets » est déclarée).
+   ===================================================================== */
+const ST = { db: null, assets: null, mode: "local", notes: [], pret: false, abonnes: new Set() };
+
+function notifier() { ST.abonnes.forEach(f => { try { f(ST.notes); } catch (e) {} }); }
+// ordre = priorité (plus grand = plus haut) ; par défaut la date, donc les plus récentes en haut
+const trierNotes = () => ST.notes.sort((a, b) => (b.ordre || 0) - (a.ordre || 0));
+function normaliser(n) {
+  // compatibilité avec les notes au format simple (texte, ecran, at, statut/valide)
+  if (!n.uid) n.uid = n.id || uid();
+  if (n.valide === undefined) n.valide = n.statut === "done" ? (n.modifie || n.at) : null;
+  delete n.statut;
+  if (!Array.isArray(n.pieces)) n.pieces = [];
+  if (!Array.isArray(n.rouvertes)) n.rouvertes = [];
+  if (typeof n.ordre !== "number") n.ordre = Date.parse(n.at) || Date.now();
+  return n;
+}
+const sansId = n => { const { id, ...r } = n; return JSON.parse(JSON.stringify(r)); };
+
+async function capacite(nom, delai) {
+  try { if (!window.claude || !window.claude.use) return null; return await Promise.race([window.claude.use(nom), attendre(delai || 4000).then(() => null)]); }
+  catch (e) { return null; }
+}
+
+async function stockageInit() {
+  // 1. ce qui est déjà sur l'appareil (affichage immédiat)
+  ST.notes = (local.lire("notes", []) || []).map(normaliser); trierNotes(); notifier();
+  // 2. la base
+  let db = CFG.db;
+  if (db === "auto") db = await capacite("db", 6000);
+  if (db && typeof db.collection === "function") {
+    ST.db = db; ST.mode = "base";
+    const col = db.collection(CFG.collection);
+    const appliquer = docs => {
+      const enAttente = local.lire("attente", []) || [];
+      const deBase = docs.map(d => normaliser({ id: d.id, ...d.data() }));
+      const connus = new Set(deBase.map(n => n.uid));
+      ST.notes = deBase.concat(enAttente.filter(n => !connus.has(n.uid)).map(normaliser));
+      trierNotes(); notifier();
+    };
+    try {
+      if (typeof col.onSnapshot === "function") {
+        await new Promise(res => {
+          const t = setTimeout(res, 8000);
+          col.onSnapshot(s => { clearTimeout(t); appliquer(s.docs || []); res(); }, () => { clearTimeout(t); res(); });
+        });
+      } else if (typeof col.get === "function") { const s = await col.get(); appliquer(s.docs || []); }
+    } catch (e) {}
+    local.ecrire("notes", null); // la base fait foi
+    viderAttente();
+  }
+  ST.assets = await capacite("assets", 3000);
+  ST.pret = true; notifier();
+}
+
+function sauverLocal() { if (ST.mode === "local") local.ecrire("notes", ST.notes.slice(0, 500)); }
+function mettreEnAttente(n) { const a = local.lire("attente", []) || []; if (!a.some(x => x.uid === n.uid)) a.unshift(sansId(n)); local.ecrire("attente", a.slice(0, 300)); }
+async function viderAttente() {
+  const a = local.lire("attente", []) || []; if (!a.length || !ST.db) return;
+  const reste = [];
+  for (const n of a) { if (!(await ecrireBase(n))) reste.push(n); }
+  local.ecrire("attente", reste.length ? reste : null);
+}
+async function ecrireBase(n) {
+  const col = ST.db.collection(CFG.collection), data = sansId(n);
+  try { if (typeof col.doc === "function") { const d = col.doc(n.uid); if (d && typeof d.set === "function") { await d.set(data); n.id = n.uid; return true; } } } catch (e) {}
+  try { const r = await col.add(data); if (r && r.id) n.id = r.id; return true; } catch (e) { return false; }
+}
+const docDe = n => ST.db.collection(CFG.collection).doc(n.id || n.uid);
+
+async function noteAjouter(n) {
+  normaliser(n); ST.notes.unshift(n); trierNotes(); notifier();
+  if (ST.db) { if (!(await ecrireBase(n))) { mettreEnAttente(n); toast("Note gardée sur cet appareil : elle partira dans la base dès que possible."); } }
+  sauverLocal(); notifier();
+  if (typeof CFG.surNote === "function") { try { CFG.surNote(n); } catch (e) {} }
+  return n;
+}
+async function noteModifier(n, champs) {
+  Object.assign(n, champs); notifier();
+  if (ST.db) { try { await docDe(n).update(JSON.parse(JSON.stringify(champs))); } catch (e) { mettreEnAttente(n); } }
+  sauverLocal();
+}
+async function noteSupprimer(n) {
+  ST.notes = ST.notes.filter(x => x !== n); notifier();
+  if (ST.db) { try { await docDe(n).delete(); } catch (e) {} }
+  const a = (local.lire("attente", []) || []).filter(x => x.uid !== n.uid); local.ecrire("attente", a.length ? a : null);
+  sauverLocal();
+}
+
+/* ---------- Images (captures) : IndexedDB + fichiers de l'artifact ---------- */
+let idbP = null;
+function idb() {
+  if (idbP) return idbP;
+  idbP = new Promise(res => {
+    try {
+      const r = indexedDB.open("outil-debogage", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("images");
+      r.onsuccess = () => res(r.result); r.onerror = () => res(null);
+    } catch (e) { res(null); }
+  });
+  return idbP;
+}
+async function imageMettre(cleImg, blob) {
+  const base = await idb();
+  if (base) await new Promise(res => { try { const t = base.transaction("images", "readwrite"); t.objectStore("images").put(blob, cleImg); t.oncomplete = res; t.onerror = res; } catch (e) { res(); } });
+  let asset = "";
+  if (ST.assets) { try { const r = await ST.assets.upload(blob); asset = r && r.id || ""; } catch (e) {} }
+  return { cle: cleImg, asset };
+}
+async function imageBlob(ref) {
+  if (!ref) return null;
+  const base = await idb();
+  if (base) { const b = await new Promise(res => { try { const q = base.transaction("images").objectStore("images").get(ref.cle); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); } catch (e) { res(null); } }); if (b) return b; }
+  if (ref.asset) { try { const r = await fetch("/_blob/" + ref.asset); if (r.ok) return await r.blob(); } catch (e) {} }
+  if (ref.data) { try { return await (await fetch(ref.data)).blob(); } catch (e) {} }
+  return null;
+}
+const urlsImages = new Map();
+async function imageUrl(ref) {
+  if (!ref) return "";
+  if (urlsImages.has(ref.cle)) return urlsImages.get(ref.cle);
+  const b = await imageBlob(ref); if (!b) return ref.asset ? "/_blob/" + ref.asset : "";
+  const u = URL.createObjectURL(b); urlsImages.set(ref.cle, u); return u;
+}
+
+/* ===== 04-notes.js ===== */
+/* =====================================================================
+   Notes : création, validation avec version de correction, réouverture
+   ===================================================================== */
+const OUTIL = { actif: null };       // outil d'annotation en cours (capture, pointer…)
+const COMPO = { pieces: [] };        // pièces jointes de la note en cours d'écriture
+
+const aTraiter = () => ST.notes.filter(n => !n.valide);
+
+async function creerNote(texte, via, pieces) {
+  texte = String(texte || "").trim(); pieces = pieces || [];
+  if (!texte && !pieces.length) return null;
+  if (!texte) texte = resumePieces(pieces);
+  const n = {
+    uid: uid(), at: iso(), ordre: Date.now(), texte, ecran: ecranCourant(), via: via || "texte",
+    projet: CFG.projet, version: CFG.version, outil: VERSION_OUTIL,
+    valide: null, corrigeeEn: "", rouvertes: [], pieces,
+    contexte: PREFS.contexte === false ? null : contexteNote(),
+    appareil: navigator.userAgent.slice(0, 160)
+  };
+  return noteAjouter(n);
+}
+function validerNote(n) { return noteModifier(n, { valide: iso(), corrigeeEn: CFG.version || "" }); }
+function rouvrirNote(n) {
+  const r = (n.rouvertes || []).concat([{ at: iso(), version: CFG.version || "", corrigeeEn: n.corrigeeEn || "" }]);
+  return noteModifier(n, { valide: null, rouvertes: r });
+}
+
+// Une ligne qui résume les pièces jointes (pour les puces et quand la note n'a pas de texte)
+function resumePiece(p) {
+  if (p.type === "capture") { const z = (p.zones || []).length; return "Capture" + (z ? " · " + z + " zone" + (z > 1 ? "s" : "") : ""); }
+  if (p.type === "element") return "Élément : " + tronquer(p.texte ? p.balise + " « " + p.texte + " »" : p.selecteur, 50);
+  if (p.type === "texte") return "Texte : « " + tronquer(p.texte, 30) + " »" + (p.remplacement ? " → « " + tronquer(p.remplacement, 30) + " »" : "");
+  if (p.type === "mesure") return "Mesure : " + tronquer(p.resume, 60);
+  return p.type;
+}
+const resumePieces = ps => ps.map(resumePiece).join(" ; ");
+
+/* ===== 05-interface.js ===== */
+/* =====================================================================
+   Interface : bulle, fenêtre de note, liste, vérification, réglages
+   ===================================================================== */
+const ICO = {
+  bulle: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg>',
+  capture: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><path d="M8.5 12.5c0-2.2 1.6-3.8 3.6-3.8s3.4 1.3 3.4 3c0 2.4-2.6 3.6-4.6 3.3-1.4-.2-2.4-1.2-2.4-2.5z"/></svg>',
+  element: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.5l13 6.2-5.6 1.8-1.9 5.7z"/><path d="M13 13l5.5 5.5"/></svg>',
+  texte: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7V5h11v2M10.5 5v13M8 18h5"/><path d="M15 12h5M17.5 12v7M16 19h3"/></svg>',
+  mesure: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 16.5l13-13 4 4-13 13z"/><path d="M7.5 12.5l2 2M10.5 9.5l1.5 1.5M13.5 6.5l2 2"/></svg>',
+  micro: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>',
+  stop: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>',
+  fermer: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  points: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>',
+  reglages: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>',
+  export: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13"/></svg>',
+  liste: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg>',
+  crayon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>'
+};
+
+let HOTE = null, RACINE = null;
+const PREFS = { bulle: null, contexte: true, filtre: "todo" };
+// Réglages d'interface (onglet Interface), communs à tous les projets de cet appareil
+const OUTILS_ORDRE = ["capture", "element", "texte", "mesure", "dicter"];
+const INTERFACE_DEFAUT = () => ({
+  fermeture: "vague",                                       // bande | vague | cible | coin | aucune
+  fenetre: { glisser: true, cote: true, echap: true, apresEnreg: true },
+  outils: { barre: OUTILS_ORDRE.slice(), pied: [], masques: [] },
+  masques: [],                                              // autres éléments masqués
+  tailleBulle: "normale",
+  couleurs: "appli"                                         // appli | neutre | clair | sombre
+});
+const IF = INTERFACE_DEFAUT();
+function chargerInterface() {
+  let v = null; try { v = JSON.parse(localStorage.getItem("debogage:interface") || "null"); } catch (e) {}
+  if (!v) return;
+  Object.assign(IF, v, { fenetre: Object.assign(INTERFACE_DEFAUT().fenetre, v.fenetre || {}), outils: Object.assign(INTERFACE_DEFAUT().outils, v.outils || {}) });
+  // un outil ajouté dans une nouvelle version apparaît dans la barre
+  const connus = new Set([].concat(IF.outils.barre, IF.outils.pied, IF.outils.masques));
+  OUTILS_ORDRE.forEach(o => { if (!connus.has(o)) IF.outils.barre.push(o); });
+  ["barre", "pied", "masques"].forEach(k => IF.outils[k] = IF.outils[k].filter(o => OUTILS_ORDRE.includes(o)));
+}
+function sauverInterface() { try { localStorage.setItem("debogage:interface", JSON.stringify(IF)); } catch (e) {} appliquerInterface(); }
+const UI = { verifPile: [], verifForce: null, vue: "note", ouverts: new Set(), edition: null, verif: false, saut: new Set(), refs: new Map(), via: "texte", fermeT: 0 };
+const q = s => RACINE.querySelector(s);
+const estLarge = () => innerWidth >= 720;
+
+function construireUI() {
+  HOTE = document.createElement("div");
+  HOTE.setAttribute("data-outil-debogage", VERSION_OUTIL);
+  HOTE.style.cssText = "position:fixed;inset:0;z-index:2147483000;pointer-events:none;display:block;";
+  RACINE = HOTE.attachShadow({ mode: "open" });
+  RACINE.innerHTML = `<style>${CSS_OUTIL}</style><div class="r">
+    <button type="button" class="bulle" id="bulle" hidden aria-label="Outil de débogage : toucher pour noter, appui long pour dicter">${ICO.bulle}<i class="compte" data-masquable="compteur"></i><b class="etat"></b></button>
+    <div class="zf" id="zoneFerm" hidden aria-hidden="true"></div>
+    <style id="stMasques"></style>
+    <section class="pnl" id="pnl" hidden role="dialog" aria-label="Outil de débogage">
+      <header class="tete" id="tete">
+        <div class="poignee" aria-hidden="true"></div>
+        <div class="titres"><b id="titre">Nouvelle note</b><small id="ou" data-masquable="ecran"></small></div>
+        <nav class="onglets" role="tablist" aria-label="Sections">
+          <button type="button" role="tab" data-vue="note" aria-selected="true" aria-label="Nouvelle note">${ICO.crayon}</button>
+          <button type="button" role="tab" data-vue="liste" aria-selected="false" aria-label="Notes">${ICO.liste}<i id="nbTodo"></i></button>
+          <button type="button" role="tab" data-vue="reglages" aria-selected="false" aria-label="Export et réglages">${ICO.export}</button>
+          <button type="button" role="tab" data-vue="interface" aria-selected="false" aria-label="Interface">${ICO.reglages}</button>
+        </nav>
+        <button type="button" class="ic" id="fermer" aria-label="Fermer la fenêtre">${ICO.fermer}</button>
+      </header>
+      <div class="zoneMasquer" id="zoneMasquer" hidden>Glisse ici pour masquer l'outil</div>
+      <div class="vue" id="v-note">
+        <div class="outils" id="outilsBarre" role="toolbar" aria-label="Outils d'annotation"></div>
+        <ul class="pieces" id="pieces"></ul>
+        <textarea id="saisie" rows="3" placeholder="Ce qui ne va pas, ce qu'il faut changer…" aria-label="Texte de la note"></textarea>
+        <p class="msg" id="msg" role="status" aria-live="polite"></p>
+        <div class="pied"><div class="outils-pied" id="outilsPied" role="toolbar" aria-label="Outils à côté d'Enregistrer"></div><button type="button" class="btn prim" id="enreg">Enregistrer la note</button></div>
+      </div>
+      <div class="vue" id="v-liste" hidden></div>
+      <div class="vue" id="v-reglages" hidden></div>
+      <div class="vue" id="v-interface" hidden></div>
+    </section>
+    <div class="menu3" id="menu3" hidden role="menu"></div>
+    <div class="calque" id="calque" hidden></div>
+    <div class="toast" id="toast" hidden role="status" aria-live="polite"><span></span><button type="button" hidden></button></div>
+  </div>`;
+  document.documentElement.appendChild(HOTE);
+  // si l'appli remplace le contenu de la page, on se remet en place
+  new MutationObserver(() => { if (!HOTE.isConnected) document.documentElement.appendChild(HOTE); }).observe(document.documentElement, { childList: true });
+  brancherBulle(); brancherPanneau(); brancherListe(); brancherPerso(); appliquerInterface();
+}
+
+/* ---------- Message en bas de l'écran, avec action facultative (Annuler…) ---------- */
+let toastT = 0;
+function toast(texte, action, duree) {
+  if (!RACINE) return;
+  const t = q("#toast"), b = t.querySelector("button");
+  t.querySelector("span").textContent = texte;
+  b.hidden = !action; if (action) { b.textContent = action.libelle; b.onclick = () => { t.hidden = true; action.faire(); }; }
+  t.classList.toggle("haut", !!OUTIL.actif); t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, duree || (action ? 6000 : 3200));
+}
+
+/* ---------- Bulle ---------- */
+function afficherBulle(v) { PREFS.bulle = v; local.ecrire("prefs", PREFS); rendreBulle(); }
+function rendreBulle() {
+  const b = q("#bulle"); if (!b) return;
+  b.hidden = !PREFS.bulle || !!OUTIL.actif;
+  b.querySelector(".compte").textContent = aTraiter().length || "";
+  b.classList.toggle("rec", !!DICT.mode);
+  b.querySelector(".etat").textContent = DICT.mode === "ecoute" ? "ÉCOUTE" : DICT.mode ? "REC" : "";
+}
+function brancherBulle() {
+  const b = q("#bulle"), vague = q("#zoneFerm");
+  const xy = local.lire("bulleXY", null);
+  const placer = (x, y) => { const t = b.offsetWidth || 56; b.style.left = borne(x, 4, innerWidth - t - 4) + "px"; b.style.top = borne(y, 4, innerHeight - t - 4) + "px"; b.style.right = "auto"; };
+  if (xy) placer(xy.x, xy.y);
+  addEventListener("resize", () => { if (b.style.left) placer(parseFloat(b.style.left), parseFloat(b.style.top)); });
+  let g = null;
+  const surVague = (x, y) => estChaud(IF.fermeture, x, y);
+  b.addEventListener("pointerdown", e => {
+    if (e.button > 0) return;
+    const r = b.getBoundingClientRect();
+    g = { x: e.clientX, y: e.clientY, l: r.left, t: r.top, bouge: false, long: false };
+    try { b.setPointerCapture(e.pointerId); } catch (er) {}
+    g.timer = setTimeout(() => { if (g && !g.bouge) { g.long = true; try { navigator.vibrate && navigator.vibrate(18); } catch (er) {} ouvrirPanneau("note"); dicteeBasculer("dictee"); } }, 550);
+  });
+  b.addEventListener("pointermove", e => {
+    if (!g) return; const dx = e.clientX - g.x, dy = e.clientY - g.y;
+    if (!g.bouge && Math.hypot(dx, dy) < 8) return;
+    if (!g.bouge) { g.bouge = true; clearTimeout(g.timer); b.classList.add("glisse"); vague.hidden = IF.fermeture === "aucune"; if (!estLarge()) fermerPanneau(); }
+    placer(g.l + dx, g.t + dy);
+    const p = proximite(IF.fermeture, e.clientX, e.clientY);
+    vague.classList.toggle("pres", p > 0); vague.style.setProperty("--p", String(p));
+    vague.classList.toggle("chaud", surVague(e.clientX, e.clientY));
+  });
+  const fin = e => {
+    if (!g) return; const s = g; g = null; clearTimeout(s.timer);
+    b.classList.remove("glisse"); vague.hidden = true; vague.classList.remove("pres", "chaud");
+    if (s.long) return;
+    if (!s.bouge) { if (q("#pnl").hidden) ouvrirPanneau("note"); else fermerPanneau(); return; }
+    if (surVague(e.clientX, e.clientY)) {
+      b.style.left = b.style.top = b.style.right = ""; local.ecrire("bulleXY", null); fermerPanneau(); afficherBulle(false);
+      toast("Bulle masquée.", { libelle: "Annuler", faire: () => afficherBulle(true) });
+    } else local.ecrire("bulleXY", { x: parseFloat(b.style.left), y: parseFloat(b.style.top) });
+  };
+  b.addEventListener("pointerup", fin); b.addEventListener("pointercancel", fin);
+  b.addEventListener("click", e => e.preventDefault());
+  b.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (q("#pnl").hidden) ouvrirPanneau("note"); else fermerPanneau(); } });
+}
+
+/* ---------- Fenêtre ---------- */
+function ouvrirPanneau(vue) {
+  const p = q("#pnl"); clearTimeout(UI.fermeT);
+  if (vue) changerVue(vue);
+  q("#ou").textContent = ecranCourant();
+  appliquerTheme();
+  p.hidden = false; placerPanneau();
+  if (UI.vue === "note" && !DICT.mode && estLarge()) setTimeout(() => q("#saisie").focus({ preventScroll: true }), 60);
+  rendre();
+}
+function fermerPanneau() { q("#pnl").hidden = true; q("#menu3").hidden = true; }
+function changerVue(v) {
+  UI.vue = v;
+  RACINE.querySelectorAll(".onglets [data-vue]").forEach(b => b.setAttribute("aria-selected", String(b.dataset.vue === v)));
+  ["note", "liste", "reglages", "interface"].forEach(k => { q("#v-" + k).hidden = k !== v; });
+  q("#titre").textContent = { note: "Nouvelle note", liste: "Notes", reglages: "Export et réglages", interface: "Interface" }[v];
+  if (v !== "liste") UI.verif = false;
+  rendre();
+}
+function placerPanneau() {
+  const p = q("#pnl"), pos = local.lire("pnlXY", null);
+  if (!estLarge() || !pos) { p.style.left = p.style.top = p.style.right = p.style.bottom = ""; return; }
+  const w = p.offsetWidth || 420, h = Math.min(p.offsetHeight || 400, 160);
+  Object.assign(p.style, { left: borne(pos.x, 8, innerWidth - w - 8) + "px", top: borne(pos.y, 8, innerHeight - h) + "px", right: "auto", bottom: "auto" });
+}
+function brancherPanneau() {
+  const p = q("#pnl"), tete = q("#tete");
+  q("#fermer").onclick = fermerPanneau;
+  RACINE.querySelectorAll(".onglets [data-vue]").forEach(b => b.onclick = () => changerVue(b.dataset.vue));
+  // déplacer (PC) ou glisser vers le bas pour fermer (téléphone)
+  let d = null;
+  tete.addEventListener("pointerdown", e => { if (e.target.closest("button")) return; const r = p.getBoundingClientRect(); d = { x: e.clientX, y: e.clientY, l: r.left, t: r.top }; try { tete.setPointerCapture(e.pointerId); } catch (er) {} });
+  tete.addEventListener("pointermove", e => {
+    if (!d) return;
+    if (estLarge()) Object.assign(p.style, { left: borne(d.l + e.clientX - d.x, 8, innerWidth - p.offsetWidth - 8) + "px", top: borne(d.t + e.clientY - d.y, 8, innerHeight - 120) + "px", right: "auto", bottom: "auto" });
+    else if (IF.fenetre.glisser) { const dy = Math.max(0, e.clientY - d.y); p.style.transform = "translateY(" + dy + "px)"; }
+  });
+  const fin = e => {
+    if (!d) return; const s = d; d = null;
+    if (estLarge()) { const r = p.getBoundingClientRect(); if (Math.hypot(e.clientX - s.x, e.clientY - s.y) > 4) local.ecrire("pnlXY", { x: r.left, y: r.top }); }
+    else { p.style.transform = ""; if (IF.fenetre.glisser && e.clientY - s.y > 90) fermerPanneau(); }
+  };
+  tete.addEventListener("pointerup", fin); tete.addEventListener("pointercancel", fin);
+  tete.addEventListener("dblclick", e => { if (e.target.closest("button")) return; local.ecrire("pnlXY", null); placerPanneau(); });
+  addEventListener("resize", () => { if (!p.hidden) placerPanneau(); });
+
+  // outils
+  q("#v-note").addEventListener("click", e => {
+    const b = e.target.closest("[data-outil]"); if (!b || UI.ignoreClic) return;
+    const o = b.dataset.outil;
+    if (o === "dicter") return dicteeBasculer("dictee");
+    if (DICT.mode === "dictee") dicteeArreter();
+    ({ capture: outilCapture, element: outilElement, texte: outilTexte, mesure: outilMesure })[o]();
+  });
+  // enregistrer
+  const saisie = q("#saisie");
+  q("#enreg").onclick = enregistrer;
+  saisie.addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); enregistrer(); } });
+  saisie.addEventListener("input", () => { if (!DICT.mode) q("#msg").textContent = ""; ajusterHauteur(saisie); });
+  q("#pieces").addEventListener("click", e => { const x = e.target.closest("[data-retirer]"); if (!x) return; COMPO.pieces.splice(+x.dataset.retirer, 1); rendrePieces(); });
+}
+async function enregistrer() {
+  if (DICT.mode === "dictee") await dicteeArreter();
+  const s = q("#saisie"), txt = s.value;
+  if (!txt.trim() && !COMPO.pieces.length) { q("#msg").textContent = "Écris, dicte ou ajoute une capture avant d'enregistrer."; s.focus(); return; }
+  const n = await creerNote(txt, UI.via, COMPO.pieces.slice());
+  if (!n) return;
+  s.value = ""; COMPO.pieces = []; UI.via = "texte"; rendrePieces();
+  q("#msg").textContent = "Note enregistrée.";
+  toast("Note enregistrée · " + aTraiter().length + " à traiter.", { libelle: "Voir", faire: () => ouvrirPanneau("liste") });
+  clearTimeout(UI.fermeT); UI.fermeT = setTimeout(() => { if (IF.fenetre.apresEnreg && UI.vue === "note" && !s.value) fermerPanneau(); q("#msg").textContent = ""; }, 900);
+}
+
+function rendrePieces() {
+  const ul = q("#pieces");
+  ul.innerHTML = COMPO.pieces.map((p, i) => {
+    const ico = p.type === "capture" ? "" : `<span class="pic">${ICO[p.type] || ICO.mesure}</span>`;
+    const img = p.type === "capture" ? `<img alt="" data-img="${esc(p.image && p.image.cle)}">` : "";
+    const sous = p.type === "capture" ? (p.zones || []).map(z => "① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨".split(" ")[z.n - 1] + " " + (z.consigne || "zone")).join(" · ") || "Sans zone entourée"
+      : p.type === "element" ? p.selecteur : p.type === "texte" ? (p.remplacement ? "Remplacer par « " + p.remplacement + " »" : "Texte sélectionné") : p.details || "";
+    return `<li class="piece">${img}${ico}<span class="pt"><b>${esc(resumePiece(p))}</b><small>${esc(tronquer(sous, 90))}</small></span><button type="button" class="ic" data-retirer="${i}" aria-label="Retirer cette pièce">${ICO.fermer}</button></li>`;
+  }).join("");
+  COMPO.pieces.forEach(p => { if (p.image) UI.refs.set(p.image.cle, p.image); });
+  chargerImages(ul);
+}
+async function chargerImages(racine) {
+  for (const im of racine.querySelectorAll("img[data-img]")) {
+    const ref = UI.refs.get(im.dataset.img); if (!ref || im.src) continue;
+    const u = await imageUrl(ref); if (u) im.src = u;
+  }
+}
+
+/* ---------- Rendu général ---------- */
+function rendre() {
+  if (!RACINE) return;
+  rendreBulle();
+  q("#nbTodo").textContent = aTraiter().length || "";
+  const pnl = q("#pnl"); if (pnl.hidden) return;
+  if (UI.vue === "liste") rendreListe();
+  else if (UI.vue === "reglages") rendreReglages();
+  else if (UI.vue === "interface") rendreInterface();
+  RACINE.querySelectorAll('[data-outil="dicter"]').forEach(d => {
+    d.classList.toggle("on", DICT.mode === "dictee");
+    d.innerHTML = DICT.mode === "dictee" ? ICO.stop + "<span>Arrêter</span>" : ICO.micro + "<span>Dicter</span>";
+  });
+}
+
+/* ---------- Liste des notes ---------- */
+const NUM = "① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫".split(" ");
+function noteLi(n) {
+  const ouvert = UI.ouverts.has(n.uid), edit = UI.edition === n.uid;
+  const tags = [];
+  if (n.valide) tags.push(`<span class="tag ok">✓ corrigée${n.corrigeeEn ? " en v" + esc(n.corrigeeEn) : ""}</span>`);
+  if ((n.rouvertes || []).length) tags.push(`<span class="tag re">↺ rouverte${n.rouvertes.length > 1 ? " ×" + n.rouvertes.length : ""}</span>`);
+  if (n.via === "voix") tags.push(`<span title="Dictée">🎤</span>`);
+  if (n.version && n.version !== CFG.version) tags.push(`<span class="mono">v${esc(n.version)}</span>`);
+  const caps = (n.pieces || []).filter(p => p.type === "capture" && p.image);
+  caps.forEach(p => UI.refs.set(p.image.cle, p.image));
+  const autres = (n.pieces || []).filter(p => p.type !== "capture");
+  const mini = caps.length || autres.length ? `<div class="mini">${caps.map(p => `<img alt="Capture" data-img="${esc(p.image.cle)}">`).join("")}${autres.map(p => `<span class="tag">${esc(tronquer(resumePiece(p), 34))}</span>`).join("")}</div>` : "";
+  const corps = edit
+    ? `<div class="edition"><textarea data-edit rows="5" aria-label="Modifier la note">${esc(n.texte)}</textarea><div class="pied"><button type="button" class="btn" data-a="annulerEdit">Annuler</button><button type="button" class="btn prim" data-a="sauverEdit">Enregistrer</button></div></div>`
+    : `<div class="txt">${esc(n.texte)}</div>`;
+  return `<li class="note${n.valide ? " val" : ""}${edit ? " en-edition" : ""}" data-u="${esc(n.uid)}">
+    <div class="meta"><b class="quand">${esc(fmtQuand(n.at))}</b><span>·</span><span>${esc(n.ecran || "")}</span>${tags.join("")}</div>
+    ${corps}${edit ? "" : mini}
+    ${edit ? "" : `<button type="button" class="ic act" data-a="menu" aria-label="Options de la note" aria-haspopup="menu">${ICO.points}</button>`}
+    ${ouvert && !edit ? detailsNote(n) : ""}
+  </li>`;
+}
+function detailsNote(n) {
+  const b = [];
+  for (const p of n.pieces || []) {
+    if (p.type === "capture") b.push(`<div class="bloc"><img alt="Capture annotée" data-img="${esc(p.image && p.image.cle)}">${(p.zones || []).map(z => `<div style="margin-top:6px"><span class="numero">${z.n}</span>${esc(z.consigne || "(sans consigne)")}${z.elements && z.elements.length ? `<br><small>${z.elements.map(e => esc(e.t)).join(" · ")}</small>` : ""}</div>`).join("")}${p.textes && p.textes.length ? `<div style="margin-top:6px"><small>Textes écrits sur la capture : ${p.textes.map(t => "« " + esc(t) + " »").join(", ")}</small></div>` : ""}</div>`);
+    else if (p.type === "element") b.push(`<div class="bloc"><b>Élément</b> ${esc(p.balise)}${p.texte ? " « " + esc(p.texte) + " »" : ""}<br><code>${esc(p.selecteur)}</code><br><small>${esc(p.taille)} · ${esc(p.styles.police)} · ${esc(p.styles.couleur)} sur ${esc(p.styles.fond)}${p.styles.contraste ? " · contraste " + esc(p.styles.contraste) : ""}</small>${p.image ? `<br><img alt="Élément" data-img="${esc(p.image.cle)}" style="margin-top:6px;max-height:120px">` : ""}</div>`);
+    else if (p.type === "texte") b.push(`<div class="bloc"><b>Texte</b> « ${esc(p.texte)} »${p.remplacement ? ` → « ${esc(p.remplacement)} »` : ""}<br><code>${esc(p.element)}</code></div>`);
+    else if (p.type === "mesure") b.push(`<div class="bloc"><b>Mesure</b> ${esc(p.resume)}${p.details ? `<br><small>${esc(p.details)}</small>` : ""}</div>`);
+    if (p.image) UI.refs.set(p.image.cle, p.image);
+  }
+  const c = n.contexte;
+  if (c) {
+    if (c.erreurs && c.erreurs.length) b.push(`<div class="bloc"><b>${c.erreurs.length} erreur${c.erreurs.length > 1 ? "s" : ""} JavaScript</b> avant la note<br>${c.erreurs.slice(-3).map(e => `<code>${esc(e.type)} : ${esc(tronquer(e.message, 140))}</code>`).join("<br>")}</div>`);
+    if (c.parcours && c.parcours.length) b.push(`<div class="bloc"><b>Parcours</b><br><small>${c.parcours.slice(-6).map(x => esc(x.type === "écran" ? "→ " + x.ecran : x.type + " " + x.cible)).join("<br>")}</small></div>`);
+    if (c.appareil) b.push(`<div class="bloc"><small>${esc(c.appareil.systeme)} · ${esc(c.appareil.navigateur)} · ${esc(c.appareil.ecran)} ×${c.appareil.densite} · ${esc(c.appareil.orientation)} · thème ${esc(c.appareil.theme)}${n.version ? " · appli v" + esc(n.version) : ""}</small></div>`);
+  }
+  (n.rouvertes || []).forEach(r => b.push(`<div class="bloc"><small>↺ Rouverte le ${esc(fmtQuand(r.at))}${r.version ? " en v" + esc(r.version) : ""}${r.corrigeeEn ? " (avait été corrigée en v" + esc(r.corrigeeEn) + ")" : ""}</small></div>`));
+  return `<div class="det">${b.join("") || '<small>Pas de détail joint.</small>'}</div>`;
+}
+// la zone de texte garde sa taille (la fenêtre ne bouge pas) : c'est le texte qui défile,
+// et la fin reste toujours sous les yeux
+function ajusterHauteur(ta) { ta.scrollTop = ta.scrollHeight; }
+function rendreListe() {
+  if (UI.priseNote) return; // pas de redessin pendant qu'on déplace une note
+  const v = q("#v-liste"), todo = aTraiter().length, total = ST.notes.length, f = PREFS.filtre;
+  if (UI.verif) return rendreVerif(v);
+  const st = v.scrollTop;
+  const filtres = [["todo", "À traiter", todo], ["ok", "Corrigées", total - todo], ["all", "Toutes", total]]
+    .map(([k, t, n]) => `<button type="button" class="puce" data-f="${k}" aria-pressed="${f === k}">${t} (${n})</button>`).join("");
+  const liste = ST.notes.filter(n => f === "all" || (f === "todo" ? !n.valide : !!n.valide));
+  const vide = !total ? `<li class="vide"><b>Aucune note pour l'instant</b>Touche la bulle en naviguant pour noter ce qui ne va pas.</li>`
+    : !liste.length ? `<li class="vide"><b>${f === "todo" ? "Tout est corrigé 🎉" : "Rien ici"}</b>${f === "todo" ? "Aucune note à traiter." : ""}</li>` : "";
+  v.innerHTML = `<div class="filtres">${filtres}</div>
+    <small data-masquable="aide-liste">Touche une note pour voir le détail · appui long puis glisser pour changer sa priorité · appui long sans bouger pour la modifier · ⋯ pour plus d'actions.</small>
+    <ul class="liste">${liste.map(noteLi).join("") || vide}</ul>
+    ${todo ? `<div class="barre-fixe" data-masquable="verifier"><button type="button" class="btn prim large" data-a="verifier">▶ Vérifier une par une · ${todo} à traiter</button></div>` : ""}`;
+  v.scrollTop = st; chargerImages(v);
+  const ta = v.querySelector("textarea[data-edit]"); if (ta && !ta.dataset.f) { ta.dataset.f = 1; ajusterHauteur(ta); ta.focus({ preventScroll: true }); ta.setSelectionRange(ta.value.length, ta.value.length); ta.addEventListener("input", () => ajusterHauteur(ta)); ta.closest(".note").scrollIntoView({ block: "nearest" }); }
+}
+function noteDe(el) { const li = el.closest("[data-u]"); return li ? ST.notes.find(n => n.uid === li.dataset.u) : null; }
+function brancherListe() {
+  const v = q("#v-liste"), m3 = q("#menu3");
+  v.addEventListener("click", async e => {
+    const f = e.target.closest("[data-f]"); if (f) { PREFS.filtre = f.dataset.f; local.ecrire("prefs", PREFS); return rendreListe(); }
+    const a = e.target.closest("[data-a]");
+    if (a) {
+      const k = a.dataset.a, n = noteDe(a);
+      if (k === "verifier") { UI.verif = true; UI.saut.clear(); UI.verifPile = []; UI.verifForce = null; return rendreListe(); }
+      if (k === "menu" && n) return ouvrirMenu3(a, n);
+      if (k === "annulerEdit") { UI.edition = null; return rendreListe(); }
+      if (k === "sauverEdit" && n) { const t = v.querySelector("textarea[data-edit]").value.trim(); UI.edition = null; if (t && t !== n.texte) { await noteModifier(n, { texte: t, modifie: iso() }); toast("Note modifiée."); } return rendreListe(); }
+      if (k.startsWith("v-")) return actionVerif(k.slice(2));
+      return;
+    }
+    if (e.target.closest("textarea,button,a")) return;
+    const n = noteDe(e.target); if (!n || UI.edition) return;
+    UI.ouverts.has(n.uid) ? UI.ouverts.delete(n.uid) : UI.ouverts.add(n.uid); rendreListe();
+  });
+  // appui long : glisser pour changer la priorité, ou relâcher sans bouger pour modifier
+  let lp = null;
+  const bloqueDefil = e => { if (lp && lp.actif) e.preventDefault(); };
+  v.addEventListener("touchmove", bloqueDefil, { passive: false });
+  v.addEventListener("pointerdown", e => {
+    const li = e.target.closest(".note"); if (!li || e.button > 0 || e.target.closest("button,textarea") || UI.edition || UI.verif) return;
+    lp = { li, x: e.clientX, y: e.clientY, actif: false, bouge: false, pid: e.pointerId };
+    lp.t = setTimeout(() => {
+      if (!lp) return; lp.actif = true; UI.priseNote = true;
+      try { navigator.vibrate && navigator.vibrate(18); } catch (er) {}
+      try { v.setPointerCapture(lp.pid); } catch (er) {}
+      li.classList.add("prise"); v.classList.add("tri");
+    }, 450);
+  });
+  v.addEventListener("pointermove", e => {
+    if (!lp) return;
+    if (!lp.actif) { if (Math.hypot(e.clientX - lp.x, e.clientY - lp.y) > 8) { clearTimeout(lp.t); lp = null; } return; }
+    if (Math.abs(e.clientY - lp.y) > 6) lp.bouge = true;
+    // la note suit le doigt : on l'insère avant la première note dont le milieu est plus bas
+    const autres = [...v.querySelectorAll(".liste > .note")].filter(x => x !== lp.li);
+    const avant = autres.find(x => { const r = x.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; });
+    lp.li.parentNode.insertBefore(lp.li, avant || null);
+    const r = v.getBoundingClientRect();
+    if (e.clientY < r.top + 50) v.scrollTop -= 12; else if (e.clientY > r.bottom - 50) v.scrollTop += 12;
+  });
+  const finTri = async () => {
+    if (!lp) return; clearTimeout(lp.t); const s = lp; lp = null; if (!s.actif) return;
+    UI.priseNote = false; s.li.classList.remove("prise"); v.classList.remove("tri");
+    const n = noteDe(s.li); if (!n) return rendreListe();
+    if (!s.bouge) { UI.edition = n.uid; return rendreListe(); }
+    const voisin = el => el && el.classList && el.classList.contains("note") ? noteDe(el) : null;
+    const haut = voisin(s.li.previousElementSibling), bas = voisin(s.li.nextElementSibling);
+    const ordre = haut && bas ? (haut.ordre + bas.ordre) / 2 : haut ? haut.ordre - 60000 : bas ? bas.ordre + 60000 : n.ordre;
+    if (ordre !== n.ordre) { await noteModifier(n, { ordre }); trierNotes(); toast("Priorité changée : l'export pour Claude suit cet ordre."); }
+    rendreListe();
+  };
+  v.addEventListener("pointerup", finTri); v.addEventListener("pointercancel", finTri);
+  v.addEventListener("contextmenu", e => { const li = e.target.closest(".note"); if (li && !e.target.closest("textarea")) { e.preventDefault(); const n = noteDe(li), b = li.querySelector("[data-a=menu]"); if (n) ouvrirMenu3(b, n); } });
+  v.addEventListener("keydown", e => { if (e.target.matches("textarea[data-edit]")) { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) v.querySelector("[data-a=sauverEdit]").click(); if (e.key === "Escape") { e.stopPropagation(); UI.edition = null; rendreListe(); } } });
+
+  // menu ⋯
+  RACINE.addEventListener("pointerdown", e => { if (!m3.hidden && !e.composedPath().some(x => x === m3 || (x.dataset && x.dataset.a === "menu"))) m3.hidden = true; }, true);
+  m3.addEventListener("click", async e => {
+    const b = e.target.closest("[data-m]"); if (!b) return; const n = ST.notes.find(x => x.uid === m3.dataset.u); if (!n) { m3.hidden = true; return; }
+    const k = b.dataset.m;
+    if (k === "suppr" && !b.dataset.c) { b.dataset.c = 1; b.textContent = "Confirmer la suppression"; return; }
+    m3.hidden = true;
+    if (k === "modifier") { UI.edition = n.uid; rendreListe(); }
+    else if (k === "dupliquer") { const c = await creerNote(n.texte, "copie", JSON.parse(JSON.stringify(n.pieces || []))); if (c) { c.ecran = n.ecran; c.copieDe = n.uid; await noteModifier(c, { ecran: n.ecran, copieDe: n.uid }); UI.edition = c.uid; PREFS.filtre = "todo"; rendreListe(); } }
+    else if (k === "valider") { await validerNote(n); toast("Note marquée corrigée" + (CFG.version ? " en v" + CFG.version : "") + ".", { libelle: "Annuler", faire: () => noteModifier(n, { valide: null, corrigeeEn: "" }) }); }
+    else if (k === "rouvrir") { await rouvrirNote(n); toast("Note rouverte : le problème est revenu."); }
+    else if (k === "copier") { const ok = await copier(promptClaude([n])); toast(ok ? "Note copiée, prête à coller dans Claude." : "Copie impossible ici."); }
+    else if (k === "suppr") {
+      const sauve = JSON.parse(JSON.stringify(n)); await noteSupprimer(n);
+      toast("Note supprimée.", { libelle: "Annuler", faire: async () => { delete sauve.id; await noteAjouter(sauve); } });
+    }
+  });
+}
+function ouvrirMenu3(bouton, n) {
+  const m3 = q("#menu3"), r = bouton.getBoundingClientRect();
+  m3.dataset.u = n.uid;
+  m3.innerHTML = `<button type="button" role="menuitem" data-m="modifier">Modifier</button>
+    <button type="button" role="menuitem" data-m="dupliquer">Dupliquer et modifier</button>
+    ${n.valide ? `<button type="button" role="menuitem" data-m="rouvrir">↺ Rouvrir (le problème revient)</button>` : `<button type="button" role="menuitem" data-m="valider">✓ Marquer corrigée${CFG.version ? " en v" + esc(CFG.version) : ""}</button>`}
+    <button type="button" role="menuitem" data-m="copier">Copier pour Claude</button>
+    <button type="button" role="menuitem" data-m="suppr" class="danger">Supprimer</button>`;
+  m3.hidden = false;
+  const h = m3.offsetHeight, w = m3.offsetWidth;
+  m3.style.top = (r.bottom + h + 8 > innerHeight ? Math.max(8, r.top - h - 4) : r.bottom + 4) + "px";
+  m3.style.left = borne(r.right - w, 8, innerWidth - w - 8) + "px";
+  m3.querySelector("button").focus({ preventScroll: true });
+}
+
+/* ---------- Vérification une par une ---------- */
+function noteAVerifier() { return ST.notes.filter(n => !n.valide && !UI.saut.has(n.uid)).slice(-1)[0]; } // la plus ancienne d'abord
+function rendreVerif(v) {
+  const force = UI.verifForce && ST.notes.find(x => x.uid === UI.verifForce);
+  const n = force || noteAVerifier(), todo = aTraiter().length, total = ST.notes.length, faites = total - todo;
+  const tete = `<div class="verif-tete"><button type="button" class="btn petit" data-a="v-fin" aria-label="Retour à la liste des notes">‹ Notes</button>
+    <button type="button" class="btn petit" data-a="v-precedente"${UI.verifPile.length ? "" : " disabled"} aria-label="Revenir à la note précédente">‹ Précédente</button>
+    <span class="verif-compte">${faites} / ${total} corrigée${faites > 1 ? "s" : ""}</span></div>
+    <div class="barre-prog" aria-hidden="true"><i style="width:${total ? Math.round(faites / total * 100) : 0}%"></i></div>`;
+  if (!n) {
+    v.innerHTML = `<div class="verif">${tete}<b>${todo ? `Il reste ${todo} note${todo > 1 ? "s" : ""} pas encore corrigée${todo > 1 ? "s" : ""}.` : "Toutes les notes sont corrigées 🎉"}</b>
+      ${todo ? `<button type="button" class="btn prim" data-a="v-revoir">Les revoir</button>` : ""}</div>`;
+    v.dataset.u = ""; return;
+  }
+  (n.pieces || []).forEach(p => p.image && UI.refs.set(p.image.cle, p.image));
+  const cap = (n.pieces || []).find(p => p.type === "capture" && p.image);
+  v.innerHTML = `<div class="verif">${tete}
+    <small><b>${esc(fmtQuand(n.at))}</b> · ${esc(n.ecran || "")}${n.valide ? ` · <span class="tag ok">✓ corrigée${n.corrigeeEn ? " en v" + esc(n.corrigeeEn) : ""}</span>` : ""}</small>
+    <div class="txt">${esc(n.texte)}</div>
+    ${cap ? `<img alt="Capture" data-img="${esc(cap.image.cle)}">` : ""}
+    <small>Va vérifier sur l'appli, puis indique si c'est corrigé${CFG.version ? " dans la v" + esc(CFG.version) : ""}.</small>
+    <div class="trois"><button type="button" class="btn" data-a="v-plustard">Pas encore</button><button type="button" class="btn" data-a="v-modifier">Modifier</button>${n.valide
+      ? `<button type="button" class="btn" data-a="v-nonok">↺ Pas corrigée</button>`
+      : `<button type="button" class="btn prim" data-a="v-ok">✓ Corrigé</button>`}</div>
+  </div>`;
+  v.dataset.u = n.uid; chargerImages(v);
+}
+async function actionVerif(k) {
+  const n = ST.notes.find(x => x.uid === q("#v-liste").dataset.u);
+  const suivante = () => { if (n) UI.verifPile.push(n.uid); UI.verifForce = null; };
+  if (k === "ok" && n) { await validerNote(n); suivante(); toast("Corrigée" + (CFG.version ? " en v" + CFG.version : "") + ".", { libelle: "Annuler", faire: () => noteModifier(n, { valide: null, corrigeeEn: "" }) }); }
+  else if (k === "nonok" && n) { await noteModifier(n, { valide: null, corrigeeEn: "" }); }
+  else if (k === "plustard" && n) { UI.saut.add(n.uid); suivante(); }
+  else if (k === "precedente" && UI.verifPile.length) { const u = UI.verifPile.pop(); UI.saut.delete(u); UI.verifForce = u; }
+  else if (k === "modifier" && n) { UI.verif = false; UI.edition = n.uid; PREFS.filtre = "all"; }
+  else if (k === "revoir") { UI.saut.clear(); UI.verifForce = null; }
+  else if (k === "fin") UI.verif = false;
+  rendreListe();
+}
+
+/* ---------- Export et réglages ---------- */
+function rendreReglages() {
+  const v = q("#v-reglages"), todo = aTraiter().length, attente = (local.lire("attente", []) || []).length;
+  const ok = ST.notes.length - todo;
+  v.innerHTML = `
+    <div class="sec"><h3>Transmettre à Claude</h3>
+      <button type="button" class="btn prim" data-r="copier"${todo ? "" : " disabled"}>Copier les ${todo} note${todo > 1 ? "s" : ""} à traiter</button>
+      <div class="grille2">
+        <button type="button" class="btn" data-r="zip"${ST.notes.length ? "" : " disabled"}>⬇ ZIP avec captures</button>
+        <button type="button" class="btn" data-r="json"${ST.notes.length ? "" : " disabled"}>⬇ Pour le tableau de bord</button>
+      </div>
+      ${CFG.partager ? `<button type="button" class="btn" data-r="partager"${todo ? "" : " disabled"}>Partager (WhatsApp, mail…)</button>` : ""}
+      <small data-masquable="aide-export">Le texte copié est rangé par écran, avec les consignes de chaque zone, les éléments repérés et les erreurs. Le ZIP ajoute les captures.</small>
+    </div>
+    <div class="sec"><h3>Prise de notes</h3>
+      <div class="ligne"><span><b>Écoute continue</b><small>Parle en naviguant : chaque phrase devient une note, avec l'écran en cours.</small></span><button type="button" class="bascule" role="switch" aria-label="Écoute continue" aria-checked="${DICT.mode === "ecoute"}" data-r="ecoute"></button></div>
+      <div class="ligne"><span><b>Joindre le contexte technique</b><small>Erreurs JavaScript, parcours récent, appareil et état de l'appli.</small></span><button type="button" class="bascule" role="switch" aria-label="Joindre le contexte technique" aria-checked="${PREFS.contexte !== false}" data-r="contexte"></button></div>
+      <div class="ligne"><span><b>Bulle à l'écran</b><small>Pour la remettre ensuite : ${CFG.raccourci ? "Ctrl + Maj + D, ou " : ""}le menu de l'appli.</small></span><button type="button" class="bascule" role="switch" aria-label="Bulle à l'écran" aria-checked="${!!PREFS.bulle}" data-r="bulle"></button></div>
+    </div>
+    <div class="sec"><h3>Ménage</h3>
+      <div class="grille2">
+        <button type="button" class="btn danger" data-r="viderOk"${ok ? "" : " disabled"}>Effacer les ${ok} corrigée${ok > 1 ? "s" : ""}</button>
+        <button type="button" class="btn danger" data-r="viderTout"${ST.notes.length ? "" : " disabled"}>Tout effacer</button>
+      </div>
+    </div>
+    <p class="info">${esc(CFG.projet || "projet")}${CFG.version ? " v" + esc(CFG.version) : ""} · ${ST.notes.length} note${ST.notes.length > 1 ? "s" : ""}<br>
+    Rangement : ${ST.mode === "base" ? "base de l'appli" : "cet appareil seulement"}${attente ? " · " + attente + " en attente d'envoi" : ""}${ST.assets ? " · captures dans les fichiers de l'appli" : ""}<br>
+    Outil de débogage v${VERSION_OUTIL}${estLarge() ? " · Ctrl+Maj+D ouvrir · Ctrl+Entrée enregistrer · Échap fermer" : ""}</p>`;
+  v.onclick = async e => {
+    const b = e.target.closest("[data-r]"); if (!b) return; const k = b.dataset.r;
+    if (k === "copier") { const ok2 = await copier(promptClaude(aTraiter())); toast(ok2 ? todo + " note(s) copiée(s), prêtes à coller dans Claude." : "Copie impossible ici."); }
+    else if (k === "zip") { b.disabled = true; try { await exporterZip(); } finally { b.disabled = false; } }
+    else if (k === "json") { b.disabled = true; try { await exporterJson(); } finally { b.disabled = false; } }
+    else if (k === "partager") { try { await CFG.partager("notes_debogage_" + (CFG.projet || "projet") + ".txt", promptClaude(aTraiter())); } catch (er) { toast("Partage impossible."); } }
+    else if (k === "ecoute") { dicteeBasculer("ecoute"); }
+    else if (k === "contexte") { PREFS.contexte = PREFS.contexte === false; local.ecrire("prefs", PREFS); rendreReglages(); }
+    else if (k === "bulle") { afficherBulle(!PREFS.bulle); rendreReglages(); }
+    else if (k === "viderOk" || k === "viderTout") {
+      if (!b.dataset.c) { b.dataset.c = 1; b.textContent = "Confirmer ?"; return; }
+      const cible = ST.notes.filter(n => k === "viderTout" || n.valide);
+      for (const n of cible) await noteSupprimer(n);
+      toast(cible.length + " note(s) effacée(s)."); rendreReglages();
+    }
+  };
+}
+
+/* ===== 05b-perso.js ===== */
+/* =====================================================================
+   Personnalisation de l'interface
+   - apparence de la zone qui ferme la bulle (bande, vague, cible, coin, aucune),
+     avec aperçus animés dans l'onglet Interface ;
+   - façons de fermer la fenêtre ;
+   - outils déplaçables (appui long) dans la barre ou à côté d'« Enregistrer » ;
+   - clic droit (ou appui long) pour masquer un outil ou un élément, que l'on
+     retrouve ensuite dans l'onglet Interface.
+   ===================================================================== */
+const DEF_OUTILS = {
+  capture: { lib: "Capture", titre: "Figer l'écran et entourer ce qu'il faut modifier", ico: () => ICO.capture },
+  element: { lib: "Élément", titre: "Désigner un bouton, un bloc, une image…", ico: () => ICO.element },
+  texte: { lib: "Texte", titre: "Sélectionner un texte à changer", ico: () => ICO.texte },
+  mesure: { lib: "Mesure", titre: "Règle, écart, couleur, grille", ico: () => ICO.mesure },
+  dicter: { lib: "Dicter", titre: "Dicter la note", ico: () => ICO.micro }
+};
+const MASQUABLES = {
+  ecran: "Nom de l'écran, sous le titre",
+  compteur: "Compteur sur la bulle",
+  "aide-liste": "Aide au-dessus des notes",
+  verifier: "Bouton « Vérifier une par une »",
+  "aide-export": "Explication sous les boutons d'export"
+};
+const STYLES_FERMETURE = [
+  ["vague", "Vague", "Une vague monte du bas quand la bulle approche ; elle rougit au-dessus de la zone."],
+  ["bande", "Bande", "Un dégradé sur toute la largeur du bas de l'écran, avec une croix au centre."],
+  ["cible", "Cible", "Un rond à viser au centre, en bas : la bulle s'y pose pour se fermer."],
+  ["coin", "Coin", "Un quart de cercle dans le coin en bas à droite, à l'écart du pouce gauche."],
+  ["aucune", "Désactivée", "Glisser la bulle la déplace seulement ; on la masque depuis Interface ou le menu de l'appli."]
+];
+
+/* ---------- Zone de fermeture ---------- */
+function zoneHTML(style) {
+  const croix = `<div class="zf-in"><span>✕</span><b>Fermer la bulle</b></div>`;
+  if (style === "vague") return `<svg viewBox="0 0 400 160" preserveAspectRatio="none" aria-hidden="true"><path d="M0 160V60C60 60 80 0 200 0s140 60 200 60v100z"/></svg>` + croix;
+  if (style === "bande") return croix;
+  if (style === "cible") return `<div class="zf-cible">✕</div><b class="zf-lib">Lâche ici pour fermer</b>`;
+  if (style === "coin") return `<div class="zf-coin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg><b>Fermer</b></div>`;
+  return "";
+}
+const CIBLE = () => ({ x: innerWidth / 2, y: innerHeight - 106 });
+function proximite(style, x, y) {
+  if (style === "bande" || style === "vague") return borne((220 - (innerHeight - y)) / 120, 0, 1);
+  if (style === "cible") { const c = CIBLE(); return borne((320 - Math.hypot(x - c.x, y - c.y)) / 220, 0, 1); }
+  if (style === "coin") return borne((360 - Math.hypot(innerWidth - x, innerHeight - y)) / 200, 0, 1);
+  return 0;
+}
+function estChaud(style, x, y) {
+  if (style === "bande" || style === "vague") return y > innerHeight - 110;
+  if (style === "cible") { const c = CIBLE(); return Math.hypot(x - c.x, y - c.y) < 70; }
+  if (style === "coin") return Math.hypot(innerWidth - x, innerHeight - y) < 150;
+  return false;
+}
+
+/* ---------- Appliquer les réglages ---------- */
+function rendreOutils() {
+  const btn = id => { const d = DEF_OUTILS[id]; return `<button type="button" data-outil="${id}" data-masquable="outil:${id}" title="${esc(d.titre)}" aria-label="${esc(d.lib)}">${d.ico()}<span>${esc(d.lib)}</span></button>`; };
+  q("#outilsBarre").innerHTML = IF.outils.barre.map(btn).join("");
+  q("#outilsPied").innerHTML = IF.outils.pied.map(btn).join("");
+  q("#outilsBarre").classList.toggle("vide", !IF.outils.barre.length);
+  q("#outilsPied").classList.toggle("vide", !IF.outils.pied.length);
+}
+function appliquerInterface() {
+  if (!RACINE) return;
+  rendreOutils();
+  q("#stMasques").textContent = IF.masques.length ? IF.masques.map(m => `[data-masquable="${m}"]`).join(",") + "{display:none!important}" : "";
+  const z = q("#zoneFerm"); z.dataset.style = IF.fermeture; z.innerHTML = zoneHTML(IF.fermeture);
+  q("#bulle").dataset.taille = IF.tailleBulle;
+  appliquerTheme();
+  rendre();
+}
+const libelleMasquable = m => m.startsWith("outil:") ? "Outil " + DEF_OUTILS[m.slice(6)].lib : MASQUABLES[m] || m;
+function masquer(m) {
+  const avant = JSON.stringify(IF);
+  if (m.startsWith("outil:")) { const id = m.slice(6); IF.outils.barre = IF.outils.barre.filter(x => x !== id); IF.outils.pied = IF.outils.pied.filter(x => x !== id); if (!IF.outils.masques.includes(id)) IF.outils.masques.push(id); }
+  else if (!IF.masques.includes(m)) IF.masques.push(m);
+  sauverInterface();
+  toast("« " + libelleMasquable(m) + " » masqué. Tu le retrouves dans Interface.", { libelle: "Annuler", faire: () => { Object.assign(IF, JSON.parse(avant)); sauverInterface(); } });
+}
+function reafficher(m) {
+  if (m.startsWith("outil:")) { const id = m.slice(6); IF.outils.masques = IF.outils.masques.filter(x => x !== id); if (!IF.outils.barre.includes(id) && !IF.outils.pied.includes(id)) IF.outils.barre.push(id); }
+  else IF.masques = IF.masques.filter(x => x !== m);
+  sauverInterface();
+}
+function placerOutil(id, zone, index) {
+  ["barre", "pied", "masques"].forEach(k => IF.outils[k] = IF.outils[k].filter(x => x !== id));
+  const l = IF.outils[zone]; l.splice(index == null ? l.length : borne(index, 0, l.length), 0, id);
+  sauverInterface();
+}
+
+/* ---------- Gestes : appui long pour déplacer, clic droit pour masquer ---------- */
+function brancherPerso() {
+  const vn = q("#v-note"), m3 = q("#menu3"), pnl = q("#pnl");
+  let g = null;
+  const zones = () => [["masquer", q("#zoneMasquer")], ["barre", q("#outilsBarre")], ["pied", q("#outilsPied")]];
+  const dedans = (el, x, y, marge) => { const r = el.getBoundingClientRect(); return r.width && x >= r.left - marge && x <= r.right + marge && y >= r.top - marge && y <= r.bottom + marge; };
+
+  function debuter() {
+    g.actif = true; try { navigator.vibrate && navigator.vibrate(20); } catch (e) {}
+    pnl.classList.add("reorg"); q("#zoneMasquer").hidden = false;
+    g.b.classList.add("enDeplacement");
+    g.fantome = document.createElement("div"); g.fantome.className = "fantome"; g.fantome.innerHTML = g.b.innerHTML;
+    q(".r").appendChild(g.fantome); g.repere = document.createElement("i"); g.repere.className = "repere";
+    suivre(g.x, g.y);
+  }
+  function suivre(x, y) {
+    g.fantome.style.left = x + "px"; g.fantome.style.top = y + "px";
+    g.cible = null; q("#zoneMasquer").classList.remove("chaud"); g.repere.remove();
+    for (const [nom, el] of zones()) {
+      if (!dedans(el, x, y, nom === "masquer" ? 4 : 18)) continue;
+      g.cible = nom;
+      if (nom === "masquer") { q("#zoneMasquer").classList.add("chaud"); break; }
+      const enfants = [...el.children].filter(c => c !== g.b && c.dataset.outil);
+      const avant = enfants.find(c => { const r = c.getBoundingClientRect(); return x < r.left + r.width / 2; });
+      el.insertBefore(g.repere, avant || null);
+      g.index = avant ? enfants.indexOf(avant) : enfants.length;
+      break;
+    }
+  }
+  function finir(s) {
+    pnl.classList.remove("reorg"); q("#zoneMasquer").hidden = true; q("#zoneMasquer").classList.remove("chaud");
+    s.b.classList.remove("enDeplacement"); s.fantome && s.fantome.remove(); s.repere && s.repere.remove();
+    if (!s.bouge) return ouvrirMenuPerso(s.b, s.x, s.y);           // appui long sans bouger : menu (téléphone)
+    if (s.cible === "masquer") return masquer("outil:" + s.id);
+    if (s.cible === "barre" || s.cible === "pied") { placerOutil(s.id, s.cible, s.index); toast(s.cible === "pied" ? "Outil placé à côté d'Enregistrer." : "Outil placé dans la barre."); }
+  }
+  vn.addEventListener("pointerdown", e => {
+    const b = e.target.closest("[data-outil]"); if (!b || e.button > 0) return;
+    g = { b, id: b.dataset.outil, x: e.clientX, y: e.clientY, actif: false, bouge: false };
+    try { b.setPointerCapture(e.pointerId); } catch (er) {}
+    g.t = setTimeout(() => { if (g) debuter(); }, 450);
+  });
+  vn.addEventListener("pointermove", e => {
+    if (!g) return;
+    if (!g.actif) { if (Math.hypot(e.clientX - g.x, e.clientY - g.y) > 10) { clearTimeout(g.t); g = null; } return; }
+    if (Math.hypot(e.clientX - g.x, e.clientY - g.y) > 6) g.bouge = true;
+    suivre(e.clientX, e.clientY);
+  });
+  const fin = () => { if (!g) return; clearTimeout(g.t); const s = g; g = null; if (!s.actif) return; UI.ignoreClic = true; setTimeout(() => { UI.ignoreClic = false; }, 400); finir(s); };
+  vn.addEventListener("pointerup", fin); vn.addEventListener("pointercancel", fin);
+
+  // clic droit (ou appui long natif) sur un élément masquable ou sur la bulle
+  RACINE.addEventListener("contextmenu", e => {
+    if (e.defaultPrevented || e.target.closest("textarea,input")) return;
+    const cible = e.target.closest("[data-masquable]") || e.target.closest("#bulle"); if (!cible) return;
+    e.preventDefault(); if (g) return;
+    ouvrirMenuPerso(cible, e.clientX, e.clientY);
+  });
+  m3.addEventListener("click", e => {
+    const b = e.target.closest("[data-p]"); if (!b) return; m3.hidden = true;
+    const k = b.dataset.p, m = m3.dataset.perso;
+    if (k === "masquer") masquer(m);
+    else if (k === "pied" || k === "barre") { placerOutil(m.slice(6), k); toast(k === "pied" ? "Outil placé à côté d'Enregistrer." : "Outil remis dans la barre."); }
+    else if (k === "interface") ouvrirPanneau("interface");
+    else if (k === "bulle") { fermerPanneau(); afficherBulle(false); toast("Bulle masquée.", { libelle: "Annuler", faire: () => afficherBulle(true) }); }
+  });
+  // toucher à côté de la fenêtre pour la fermer
+  document.addEventListener("pointerdown", e => {
+    if (!IF.fenetre.cote || OUTIL.actif || !HOTE || q("#pnl").hidden || e.composedPath().includes(HOTE)) return;
+    fermerPanneau();
+  }, true);
+}
+function ouvrirMenuPerso(cible, x, y) {
+  const m3 = q("#menu3"), m = cible.dataset.masquable || "bulle", items = [];
+  if (m === "bulle") { items.push(["bulle", "Masquer la bulle"]); if (!IF.masques.includes("compteur")) items.push(["masquer", "Masquer le compteur"]); m3.dataset.perso = "compteur"; }
+  else {
+    m3.dataset.perso = m;
+    if (m.startsWith("outil:")) { const id = m.slice(6); items.push(IF.outils.pied.includes(id) ? ["barre", "Remettre dans la barre d'outils"] : ["pied", "Placer à côté d'Enregistrer"]); }
+    items.push(["masquer", "Masquer « " + (m.startsWith("outil:") ? DEF_OUTILS[m.slice(6)].lib : libelleMasquable(m)) + " »"]);
+  }
+  items.push(["interface", "Réglages de l'interface…"]);
+  m3.dataset.u = "";
+  const aide = m.startsWith("outil:") ? `<p class="menu-aide"><b>${esc(DEF_OUTILS[m.slice(6)].lib)}</b>${esc(DEF_OUTILS[m.slice(6)].titre)}. Appui long puis glisser pour le déplacer.</p>` : "";
+  m3.innerHTML = aide + items.map(([k, t]) => `<button type="button" role="menuitem" data-p="${k}">${esc(t)}</button>`).join("");
+  m3.hidden = false;
+  const w = m3.offsetWidth, h = m3.offsetHeight;
+  m3.style.left = borne(x - w / 2, 8, innerWidth - w - 8) + "px";
+  m3.style.top = (y + h + 12 > innerHeight ? Math.max(8, y - h - 8) : y + 8) + "px";
+  m3.querySelector("button").focus({ preventScroll: true });
+}
+
+/* ---------- Onglet Interface ---------- */
+let apercuT = 0;
+function rendreInterface() {
+  const v = q("#v-interface");
+  const st = v.scrollTop;
+  const bascule = (k, titre, sous) => `<div class="ligne"><span><b>${titre}</b><small>${sous}</small></span><button type="button" class="bascule" role="switch" aria-label="${esc(titre)}" aria-checked="${!!IF.fenetre[k]}" data-i="fenetre" data-k="${k}"></button></div>`;
+  const tousMasques = IF.outils.masques.map(id => "outil:" + id).concat(IF.masques);
+  v.innerHTML = `
+    <div class="sec"><h3>Fermer la bulle en la glissant vers le bas</h3>
+      <div class="cartesF" role="radiogroup" aria-label="Apparence de la zone de fermeture">${STYLES_FERMETURE.map(([k, t, d]) => `
+        <button type="button" class="carteF" role="radio" aria-checked="${IF.fermeture === k}" data-i="fermeture" data-v="${k}">
+          <span class="apercu" data-style="${k}" data-phase="0" aria-hidden="true"><span class="faux"><i></i><i></i><i></i><i></i></span><span class="zf" data-style="${k}">${zoneHTML(k)}</span><span class="ab"></span></span>
+          <span class="carteF-t"><b>${t}</b>${IF.fermeture === k ? '<em>✓ choisie</em>' : ""}</span><small>${d}</small>
+        </button>`).join("")}</div>
+      <small>Touche une apparence pour la choisir : elle s'affiche un instant en vrai, en bas de l'écran.</small>
+    </div>
+    <div class="sec"><h3>Fermer la fenêtre</h3>
+      ${bascule("glisser", "Glisser vers le bas", "Sur téléphone, en tirant le haut de la fenêtre.")}
+      ${bascule("cote", "Toucher à côté", "Un toucher sur l'appli ferme la fenêtre.")}
+      ${bascule("echap", "Touche Échap", "Sur ordinateur.")}
+      ${bascule("apresEnreg", "Après l'enregistrement d'une note", "La fenêtre se referme seule pour continuer à naviguer.")}
+      <small>La croix ✕ en haut reste toujours disponible.</small>
+    </div>
+    <div class="sec"><h3>Outils de la note</h3>
+      <small>Appui long sur une icône pour la déplacer : dans la barre, à côté d'« Enregistrer la note », ou sur « masquer ». Clic droit pour la masquer.</small>
+      ${OUTILS_ORDRE.map(id => { const pos = IF.outils.pied.includes(id) ? "pied" : IF.outils.masques.includes(id) ? "masques" : "barre"; return `
+        <div class="ligne ligneOutil"><span class="pic">${DEF_OUTILS[id].ico()}</span><b>${DEF_OUTILS[id].lib}</b>
+          <span class="segment" role="radiogroup" aria-label="Place de l'outil ${DEF_OUTILS[id].lib}">${[["barre", "En haut"], ["pied", "En bas"], ["masques", "Masqué"]].map(([k, t]) => `<button type="button" role="radio" aria-checked="${pos === k}" data-i="outil" data-id="${id}" data-v="${k}">${t}</button>`).join("")}</span></div>`; }).join("")}
+      <small>« En bas » = à côté du bouton « Enregistrer la note ».</small>
+    </div>
+    <div class="sec"><h3>Éléments masqués (${tousMasques.length})</h3>
+      ${tousMasques.length ? tousMasques.map(m => `<div class="ligne"><span><b>${esc(libelleMasquable(m))}</b></span><button type="button" class="btn petit" data-i="reafficher" data-v="${esc(m)}">Réafficher</button></div>`).join("")
+        : `<small>Aucun. Clic droit (ou appui long) sur un outil, le nom de l'écran, le compteur de la bulle… pour le masquer.</small>`}
+    </div>
+    <div class="sec"><h3>Couleurs</h3>
+      <div class="ligne"><span><b>Apparence de l'outil</b><small>${themeCalcule && IF.couleurs === "appli" ? (themeCalcule.detectee ? "Couleur de l'appli détectée : <span class=\"nuance\"><i style=\"background:" + esc(themeCalcule.detectee) + "\"></i><b class=\"mono\">" + esc(themeCalcule.detectee) + "</b></span>" : "Pas de couleur principale détectée : ambre par défaut.") : "Reprend le fond, la couleur principale et la police de l'appli."}</small></span></div>
+      <span class="segment large" role="radiogroup" aria-label="Couleurs de l'outil">${[["appli", "Comme l'appli"], ["neutre", "Neutre"], ["clair", "Clair"], ["sombre", "Sombre"]].map(([k, t]) => `<button type="button" role="radio" aria-checked="${(IF.couleurs || "appli") === k}" data-i="couleurs" data-v="${k}">${t}</button>`).join("")}</span>
+    </div>
+    <div class="sec"><h3>Bulle</h3>
+      <div class="ligne"><span><b>Taille</b></span><span class="segment" role="radiogroup" aria-label="Taille de la bulle">${[["petite", "Petite"], ["normale", "Normale"], ["grande", "Grande"]].map(([k, t]) => `<button type="button" role="radio" aria-checked="${IF.tailleBulle === k}" data-i="taille" data-v="${k}">${t}</button>`).join("")}</span></div>
+    </div>
+    <div class="sec"><h3>Fenêtres des outils</h3>
+      <small>Chaque fenêtre (Capture, Élément, Texte, Mesure) se déplace par sa poignée ⠿ ou par son fond, et retient sa place. Double-toucher la poignée la remet à sa place d'origine.</small>
+      <button type="button" class="btn" data-i="fenetres"${Object.keys(FEN.lire()).length ? "" : " disabled"}>Remettre toutes les fenêtres à leur place</button>
+    </div>
+    <button type="button" class="btn" data-i="reinit">Rétablir l'interface d'origine</button>`;
+  v.scrollTop = st;
+  v.onclick = e => {
+    const b = e.target.closest("[data-i]"); if (!b) return; const k = b.dataset.i;
+    if (k === "fermeture") { IF.fermeture = b.dataset.v; sauverInterface(); demontrerFermeture(); }
+    else if (k === "fenetre") { IF.fenetre[b.dataset.k] = !IF.fenetre[b.dataset.k]; sauverInterface(); }
+    else if (k === "outil") placerOutil(b.dataset.id, b.dataset.v);
+    else if (k === "reafficher") { reafficher(b.dataset.v); toast("Réaffiché."); }
+    else if (k === "taille") { IF.tailleBulle = b.dataset.v; sauverInterface(); }
+    else if (k === "couleurs") { IF.couleurs = b.dataset.v; sauverInterface(); }
+    else if (k === "fenetres") { FEN.ecrire({}); toast("Fenêtres remises à leur place."); rendreInterface(); }
+    else if (k === "reinit") { if (!b.dataset.c) { b.dataset.c = 1; b.textContent = "Confirmer : tout remettre comme au départ ?"; return; } Object.assign(IF, INTERFACE_DEFAUT()); FEN.ecrire({}); sauverInterface(); toast("Interface d'origine rétablie."); }
+  };
+  animerApercus();
+}
+// Aperçus : la mini-bulle descend, la zone apparaît, rougit, puis la bulle disparaît
+function animerApercus() {
+  clearInterval(apercuT);
+  const reduit = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const tous = () => RACINE.querySelectorAll("#v-interface .apercu");
+  if (reduit) { tous().forEach(a => a.dataset.phase = "2"); return; }
+  let ph = 0;
+  apercuT = setInterval(() => {
+    if (q("#pnl").hidden || UI.vue !== "interface") { clearInterval(apercuT); return; }
+    ph = (ph + 1) % 4; tous().forEach(a => a.dataset.phase = String(ph));
+  }, 900);
+}
+// Démonstration en vrai, en bas de l'écran
+function demontrerFermeture() {
+  const z = q("#zoneFerm"); if (IF.fermeture === "aucune") { toast("Fermeture désactivée : glisser la bulle la déplace seulement."); return; }
+  z.hidden = false; z.classList.add("pres", "demo"); z.style.setProperty("--p", "1");
+  setTimeout(() => z.classList.add("chaud"), 500);
+  setTimeout(() => { z.classList.remove("pres", "chaud", "demo"); z.hidden = true; }, 1600);
+}
+
+/* ---------- Couleurs : s'adapter à l'appli ----------
+   « appli »  : reprend la couleur principale, le fond (clair ou sombre) et la police de l'appli ;
+   « neutre » : graphite et ambre, quelle que soit l'appli ;
+   « clair » / « sombre » : surfaces imposées, couleur principale de l'appli.
+   L'appli peut aussi imposer ses couleurs : Debogage.init({ couleurs: { accent, fond, texte } }). */
+let ctxCouleur = null;
+function normaliserCouleur(c) {
+  if (!c) return null;
+  ctxCouleur = ctxCouleur || document.createElement("canvas").getContext("2d");
+  ctxCouleur.fillStyle = "#010203"; ctxCouleur.fillStyle = String(c).trim();
+  const v = ctxCouleur.fillStyle; if (v === "#010203" && !/^#010203$/i.test(String(c).trim())) return null;
+  if (v.startsWith("#")) return "rgb(" + parseInt(v.slice(1, 3), 16) + ", " + parseInt(v.slice(3, 5), 16) + ", " + parseInt(v.slice(5, 7), 16) + ")";
+  const r = rgbDe(v); return r && r.a > 0.5 ? "rgb(" + r.r + ", " + r.g + ", " + r.b + ")" : null;
+}
+function saturation(c) { const r = rgbDe(c); if (!r) return 0; const mx = Math.max(r.r, r.g, r.b) / 255, mn = Math.min(r.r, r.g, r.b) / 255, l = (mx + mn) / 2; return mx === mn ? 0 : (mx - mn) / (1 - Math.abs(2 * l - 1)); }
+function couleursAppli() {
+  const imp = CFG.couleurs || {}, root = getComputedStyle(document.documentElement);
+  let acc = normaliserCouleur(imp.accent);
+  for (const v of ["--accent", "--acc", "--primary", "--color-primary", "--primary-color", "--brand", "--brand-color", "--color-accent", "--couleur-principale", "--primaire", "--main-color", "--theme-color"]) {
+    if (acc) break; const x = normaliserCouleur(root.getPropertyValue(v)); if (x && saturation(x) > 0.25) acc = x;
+  }
+  if (!acc) { const m = document.querySelector('meta[name="theme-color"]'); const x = m && normaliserCouleur(m.content); if (x && saturation(x) > 0.25) acc = x; }
+  if (!acc) {
+    // couleur de fond la plus présente sur les boutons et liens colorés de l'appli
+    const poids = new Map();
+    [...document.querySelectorAll('button,a,[role="button"],input[type="submit"]')].slice(0, 300).forEach(el => {
+      if (HOTE && HOTE.contains(el)) return;
+      const cs = getComputedStyle(el), r = el.getBoundingClientRect(); if (!r.width) return;
+      for (const c of [cs.backgroundColor, cs.color]) { const x = normaliserCouleur(c); if (x && saturation(x) > 0.35) { poids.set(x, (poids.get(x) || 0) + (c === cs.backgroundColor ? r.width * r.height : 200)); break; } }
+    });
+    acc = [...poids.entries()].sort((a, b) => b[1] - a[1]).map(x => x[0])[0] || null;
+  }
+  const fond = normaliserCouleur(imp.fond) || normaliserCouleur(fondPage()) || "rgb(255, 255, 255)";
+  const texte = normaliserCouleur(imp.texte) || normaliserCouleur(getComputedStyle(document.body).color);
+  return { acc, fond, texte, police: getComputedStyle(document.body).fontFamily };
+}
+// éclaircit ou fonce une couleur jusqu'à un contraste suffisant sur le fond donné
+function ajusterContraste(c, fond, mini) {
+  let r = rgbDe(c); const sombre = luminance(rgbDe(fond)) < 0.4;
+  for (let k = 0; k < 20 && contraste("rgb(" + r.r + "," + r.g + "," + r.b + ")", fond) < mini; k++) {
+    r = sombre ? { r: r.r + (255 - r.r) * 0.12, g: r.g + (255 - r.g) * 0.12, b: r.b + (255 - r.b) * 0.12 } : { r: r.r * 0.88, g: r.g * 0.88, b: r.b * 0.88 };
+  }
+  return "rgb(" + Math.round(r.r) + ", " + Math.round(r.g) + ", " + Math.round(r.b) + ")";
+}
+const SURFACES = {
+  sombre: { fond: "#1D2024", fond2: "#262A2F", fond3: "#30353B", trait: "#3C434B", txt: "#EEF0F2", doux: "#AEB4BC" },
+  clair: { fond: "#FFFFFF", fond2: "#F2F3F5", fond3: "#E5E8EC", trait: "#D3D8DE", txt: "#16181B", doux: "#5A616B" }
+};
+let themeCalcule = null;
+function appliquerTheme() {
+  if (!RACINE) return;
+  const r = q(".r"), mode = IF.couleurs || "appli";
+  const info = mode === "neutre" ? {} : couleursAppli();
+  const lf = info.fond && rgbDe(info.fond);
+  const clair = mode === "clair" || (mode === "appli" && !!lf && luminance(lf) > 0.4);
+  const S = SURFACES[clair ? "clair" : "sombre"];
+  let acc = mode === "neutre" || !info.acc ? "rgb(255, 178, 36)" : info.acc;
+  acc = ajusterContraste(acc, S.fond2, 3);
+  const enc = contraste(acc, "#ffffff") >= contraste(acc, "#16181b") ? "#FFFFFF" : "#16181B";
+  Object.entries(S).forEach(([k, v]) => r.style.setProperty("--" + k, v));
+  r.style.setProperty("--acc", acc); r.style.setProperty("--acc-enc", enc);
+  r.style.setProperty("--police", mode === "appli" && info.police ? info.police : "system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", sans-serif");
+  r.dataset.theme = clair ? "clair" : "sombre";
+  themeCalcule = { mode, acc: versHex(acc), clair, detectee: info.acc ? versHex(info.acc) : "" };
+}
+
+/* ===== 06-dictee.js ===== */
+/* =====================================================================
+   Voix : dictée d'une note (le texte s'affiche pendant qu'on parle, la
+   dictée continue fenêtre fermée) et écoute continue (chaque phrase
+   devient une note). Trois moteurs, dans l'ordre :
+   1. reconnaissance native de l'appli (CFG.ecouter, ex. APK Android) ;
+   2. capacité « dictation » d'un artifact Claude (micro autorisé) ;
+   3. reconnaissance vocale du navigateur (Chrome, Edge…).
+   ===================================================================== */
+const DICT = { mode: null, cap: null, rec: null, base: "", cible: null };
+
+async function dicteePreparer() {
+  DICT.cap = await capacite("dictation", 4000);
+  if (DICT.cap) {
+    try {
+      DICT.cap.onPartial(({ text }) => DICT.cible && DICT.cible.partiel(text));
+      DICT.cap.onFinal(({ text }) => DICT.cible && DICT.cible.final(text));
+      DICT.cap.onState(({ state }) => { if (state === "idle" && DICT.mode && DICT.moteur === "cap") { const m = DICT.mode; DICT.mode = null; DICT.cible = null; if (m === "dictee") finDictee(); rendre(); } });
+    } catch (e) { DICT.cap = null; }
+  }
+}
+
+function cibleDictee() {
+  const s = q("#saisie");
+  DICT.base = s.value ? s.value.trimEnd() + " " : "";
+  return {
+    partiel: t => { s.value = DICT.base + String(t || "").trim(); suivreTexte(s); },
+    final: t => { t = String(t || "").trim(); if (!t) return; DICT.base = (DICT.base + t).trimEnd() + " "; s.value = DICT.base.trimEnd(); UI.via = "voix"; suivreTexte(s); }
+  };
+}
+const cibleEcoute = () => ({ partiel: () => {}, final: t => { t = String(t || "").trim(); if (t) creerNote(t, "voix", []).then(() => toast("Note dictée : « " + tronquer(t, 50) + " »")); } });
+
+// Appelé directement depuis le clic (la capacité « dictation » l'exige)
+function dicteeBasculer(mode) {
+  if (DICT.mode === mode) return dicteeArreter();
+  if (DICT.mode) dicteeArreter();
+  DICT.mode = mode; DICT.cible = mode === "dictee" ? cibleDictee() : cibleEcoute();
+  const msg = t => { if (q("#msg")) q("#msg").textContent = t; };
+  const echec = t => { DICT.mode = null; DICT.cible = null; msg(t); toast(t); rendre(); };
+
+  if (typeof CFG.ecouter === "function") {
+    DICT.moteur = "natif";
+    (async () => {
+      while (DICT.mode === mode) {
+        try { const t = await CFG.ecouter(); if (DICT.mode !== mode) break; DICT.cible.final(t); }
+        catch (e) { if (/permission|refus|not-allowed|denied/i.test(String(e && e.message))) { echec("Autorise le micro pour cette appli dans les réglages."); return; } await attendre(400); }
+      }
+    })();
+  } else if (DICT.cap) {
+    DICT.moteur = "cap";
+    DICT.cap.start().catch(e => echec(e && e.code === "not_granted" ? "Micro refusé : tu peux écrire la note, ou utiliser le micro du clavier." : "Le micro n'a pas pu démarrer."));
+  } else {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { echec("Dictée indisponible ici : touche le cadre puis le micro de ton clavier."); if (mode === "dictee") q("#saisie").focus(); return; }
+    DICT.moteur = "web";
+    const lancer = () => {
+      if (DICT.mode !== mode) return;
+      const r = new SR(); DICT.rec = r; r.lang = CFG.langue; r.continuous = true; r.interimResults = true;
+      let base = "";
+      r.onresult = e => {
+        let partiel = "";
+        for (let k = e.resultIndex; k < e.results.length; k++) {
+          const x = e.results[k];
+          if (x.isFinal) DICT.cible.final(x[0].transcript); else partiel += x[0].transcript;
+        }
+        if (partiel) DICT.cible.partiel(partiel);
+      };
+      r.onerror = e => { if (e.error === "not-allowed" || e.error === "service-not-allowed") echec("Micro bloqué ici : touche le cadre puis le micro de ton clavier."); };
+      r.onend = () => { if (DICT.mode === mode) setTimeout(lancer, 250); };
+      try { r.start(); } catch (e) { echec("Le micro n'a pas pu démarrer."); }
+    };
+    lancer();
+  }
+  if (DICT.mode === "dictee") msg("J'écoute… tu peux fermer la fenêtre, la bulle reste rouge tant que je note.");
+  if (DICT.mode === "ecoute") toast("Écoute continue activée : parle en naviguant.");
+  rendre();
+}
+async function dicteeArreter() {
+  const m = DICT.mode; if (!m) return;
+  DICT.mode = null;
+  try { DICT.rec && DICT.rec.stop(); } catch (e) {} DICT.rec = null;
+  if (DICT.moteur === "cap" && DICT.cap) { try { await DICT.cap.stop(); } catch (e) {} }
+  DICT.cible = null;
+  if (m === "dictee") finDictee(); else if (m === "ecoute") toast("Écoute continue arrêtée.");
+  rendre();
+}
+function finDictee() { const s = q("#saisie"); if (q("#msg")) q("#msg").textContent = s && s.value.trim() ? "Dictée arrêtée. Relis puis « Enregistrer la note »." : ""; }
+
+// pendant la dictée, la zone de texte garde sa taille : le texte remonte et la fin reste visible
+function suivreTexte(ta) {
+  if (ta.tagName === "INPUT") ta.scrollLeft = ta.scrollWidth; else ta.scrollTop = ta.scrollHeight;
+}
+
+/* ===== 07-capture.js ===== */
+/* =====================================================================
+   Outils : cadre commun + Capture annotée
+   L'écran est figé : on dessine par-dessus l'appli (zones à main levée,
+   rectangles, flèches, traits, textes, flou). Chaque zone reçoit une
+   consigne et la liste des éléments de l'appli qu'elle contient.
+   ===================================================================== */
+function outilOuvrir(nom, html, bloque) {
+  if (OUTIL.actif) outilFermer();
+  OUTIL.actif = nom;
+  const c = q("#calque"); c.innerHTML = html; c.hidden = false; c.classList.toggle("bloque", !!bloque);
+  fermerPanneau(); rendreBulle();
+  return c;
+}
+function outilFermer(piece) {
+  const nom = OUTIL.actif; OUTIL.actif = null;
+  (OUTIL.nettoyer || []).forEach(f => { try { f(); } catch (e) {} }); OUTIL.nettoyer = [];
+  const c = q("#calque"); c.innerHTML = ""; c.hidden = true; c.classList.remove("bloque");
+  if (piece) { COMPO.pieces.push(piece); rendrePieces(); }
+  if (nom) ouvrirPanneau("note");
+}
+// écouteur posé sur la page pendant l'outil, retiré à la fermeture
+function surPage(type, f, opts) { document.addEventListener(type, f, opts); (OUTIL.nettoyer = OUTIL.nettoyer || []).push(() => document.removeEventListener(type, f, opts)); }
+function surFenetre(type, f, opts) { addEventListener(type, f, opts); (OUTIL.nettoyer = OUTIL.nettoyer || []).push(() => removeEventListener(type, f, opts)); }
+const deMoiEvt = e => e.composedPath && e.composedPath().includes(HOTE);
+/* ---------- Fenêtres d'outils déplaçables (place retenue pour chaque fenêtre) ---------- */
+const FEN = {
+  lire() { try { return JSON.parse(localStorage.getItem("debogage:fenetres") || "{}") || {}; } catch (e) { return {}; } },
+  ecrire(o) { try { localStorage.setItem("debogage:fenetres", JSON.stringify(o)); } catch (e) {} }
+};
+function deplacable(el, nom) {
+  if (!el || el.dataset.fen) return; el.dataset.fen = nom;
+  el.classList.add("deplacable");
+  el.insertAdjacentHTML("afterbegin", '<span class="poigneeB" title="Glisser pour déplacer · double-toucher pour remettre en place" aria-hidden="true"></span>');
+  const poser = (x, y) => { Object.assign(el.style, { left: borne(x, 4, innerWidth - 90) + "px", top: borne(y, 4, innerHeight - 56) + "px", right: "auto", bottom: "auto", transform: "none", marginLeft: "0" }); el.dataset.deplace = "1"; };
+  const pos = FEN.lire()[nom]; if (pos) poser(pos.x, pos.y);
+  let d = null;
+  el.addEventListener("pointerdown", e => {
+    // on attrape la fenêtre par sa poignée ou par son fond, jamais par un bouton ou un champ
+    if (!e.target.closest(".poigneeB") && e.target.closest("button,input,textarea,select,a,canvas,label")) return;
+    const r = el.getBoundingClientRect(); d = { x: e.clientX, y: e.clientY, l: r.left, t: r.top, bouge: false };
+    try { el.setPointerCapture(e.pointerId); } catch (er) {} e.preventDefault();
+  });
+  el.addEventListener("pointermove", e => {
+    if (!d) return; if (!d.bouge && Math.hypot(e.clientX - d.x, e.clientY - d.y) < 4) return;
+    d.bouge = true; el.classList.add("glisse-fen"); poser(d.l + e.clientX - d.x, d.t + e.clientY - d.y);
+  });
+  const fin = () => { if (!d) return; const s = d; d = null; el.classList.remove("glisse-fen"); if (s.bouge) { const r = el.getBoundingClientRect(), o = FEN.lire(); o[nom] = { x: Math.round(r.left), y: Math.round(r.top) }; FEN.ecrire(o); } };
+  el.addEventListener("pointerup", fin); el.addEventListener("pointercancel", fin);
+  el.querySelector(".poigneeB").addEventListener("dblclick", () => { const o = FEN.lire(); delete o[nom]; FEN.ecrire(o); ["left", "top", "right", "bottom", "transform", "marginLeft"].forEach(k => { el.style[k] = ""; }); delete el.dataset.deplace; });
+}
+
+// Échap ferme l'outil en cours
+function echapFerme(annuler) { surFenetre("keydown", e => { if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); annuler(); } }, true); }
+
+/* ---------- Photographier l'écran visible ---------- */
+function fondPage() {
+  for (const el of [document.body, document.documentElement]) { const v = rgbDe(getComputedStyle(el).backgroundColor); if (v && v.a > 0.05) return getComputedStyle(el).backgroundColor; }
+  return "#ffffff";
+}
+async function rasteriser() {
+  if (!htmlToImage) return null;
+  const cs = getComputedStyle(document.body);
+  const opts = {
+    width: innerWidth, height: innerHeight,
+    pixelRatio: Math.min(window.devicePixelRatio || 1, 2), backgroundColor: fondPage(), cacheBust: false,
+    imagePlaceholder: "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+    // le contenu remonte de la hauteur défilée ; les éléments fixes restent où on les voit
+    style: { marginTop: (parseFloat(cs.marginTop) - scrollY) + "px", marginLeft: (parseFloat(cs.marginLeft) - scrollX) + "px", height: "auto", minHeight: "0", maxHeight: "none", overflow: "visible", transform: "none" },
+    filter: n => !(n.nodeType === 1 && CFG.ignorer && n.matches && n.matches(CFG.ignorer))
+  };
+  const essai = (o, ms) => Promise.race([htmlToImage.toCanvas(document.body, o), attendre(ms).then(() => { throw new Error("délai dépassé"); })]);
+  try { return await essai(opts, 15000); }
+  catch (e) { try { return await essai(Object.assign({}, opts, { skipFonts: true }), 10000); } catch (e2) { console.warn("[débogage] capture impossible :", e2 && e2.message); return null; } }
+}
+
+/* ---------- Dessin ---------- */
+const COULEURS = ["#FF3B30", "#FFB224", "#2F80ED"];
+const FORMES = [
+  ["zone", "Zone", '<svg viewBox="0 0 24 24"><path d="M6 8c1.5-3 7-4.5 11-2s3 8-2 10-10 1-11-2 0-4 2-6z" stroke-dasharray="3 2"/></svg>'],
+  ["rect", "Cadre", '<svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/></svg>'],
+  ["fleche", "Flèche", '<svg viewBox="0 0 24 24"><path d="M5 19L19 5M10 5h9v9"/></svg>'],
+  ["trait", "Trait", '<svg viewBox="0 0 24 24"><path d="M4 16c3-6 5-8 7-5s4 2 9-6"/></svg>'],
+  ["texte", "Texte", '<svg viewBox="0 0 24 24"><path d="M6 6h12M12 6v13"/></svg>'],
+  ["flou", "Masquer", '<svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/><path d="M4 10l6-4M4 15l11-9M7 18l13-9M12 18l8-5"/></svg>']
+];
+function dessinerFormes(ctx, formes, s, apercu) {
+  ctx.lineCap = "round"; ctx.lineJoin = "round";
+  for (const f of formes) {
+    ctx.save(); ctx.strokeStyle = f.c; ctx.fillStyle = f.c; ctx.lineWidth = 3.5 * s;
+    if (f.t === "zone" || f.t === "trait") {
+      if (f.p.length < 2) { ctx.restore(); continue; }
+      ctx.beginPath(); ctx.moveTo(f.p[0][0] * s, f.p[0][1] * s); for (const [x, y] of f.p) ctx.lineTo(x * s, y * s);
+      if (f.t === "zone" && f.fini) { ctx.closePath(); ctx.globalAlpha = 0.14; ctx.fill(); ctx.globalAlpha = 1; }
+      ctx.stroke();
+    } else if (f.t === "rect") {
+      ctx.globalAlpha = 0.12; ctx.fillRect(f.x * s, f.y * s, f.w * s, f.h * s); ctx.globalAlpha = 1; ctx.strokeRect(f.x * s, f.y * s, f.w * s, f.h * s);
+    } else if (f.t === "fleche") {
+      const a = Math.atan2(f.y2 - f.y1, f.x2 - f.x1), L = 16 * s;
+      ctx.beginPath(); ctx.moveTo(f.x1 * s, f.y1 * s); ctx.lineTo(f.x2 * s, f.y2 * s); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(f.x2 * s, f.y2 * s); ctx.lineTo(f.x2 * s - L * Math.cos(a - 0.45), f.y2 * s - L * Math.sin(a - 0.45)); ctx.lineTo(f.x2 * s - L * Math.cos(a + 0.45), f.y2 * s - L * Math.sin(a + 0.45)); ctx.closePath(); ctx.fill();
+    } else if (f.t === "texte") {
+      ctx.font = `700 ${17 * s}px system-ui, sans-serif`; const w = ctx.measureText(f.txt).width, pad = 6 * s;
+      ctx.fillStyle = "rgba(20,22,26,.88)"; ctx.fillRect(f.x * s - pad, f.y * s - 20 * s, w + pad * 2, 28 * s);
+      ctx.fillStyle = f.c; ctx.fillText(f.txt, f.x * s, f.y * s);
+    } else if (f.t === "flou" && apercu) {
+      ctx.fillStyle = "rgba(30,32,36,.82)"; ctx.fillRect(f.x * s, f.y * s, f.w * s, f.h * s);
+      ctx.fillStyle = "#fff"; ctx.font = `600 ${13 * s}px system-ui, sans-serif`; ctx.fillText("masqué", f.x * s + 8 * s, f.y * s + 20 * s);
+    }
+    // numéro de zone
+    if (f.n) { const [bx, by] = f.t === "rect" ? [f.x, f.y] : f.p.reduce((m, p) => p[1] < m[1] ? p : m, f.p[0]);
+      ctx.fillStyle = f.c; ctx.beginPath(); ctx.arc(bx * s, by * s, 13 * s, 0, 7); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.font = `800 ${14 * s}px system-ui, sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(String(f.n), bx * s, by * s + 0.5 * s); }
+    ctx.restore();
+  }
+}
+const boite = f => {
+  if (f.t === "rect" || f.t === "flou") return { x: f.x, y: f.y, w: f.w, h: f.h };
+  const xs = f.p.map(p => p[0]), ys = f.p.map(p => p[1]); const x = Math.min(...xs), y = Math.min(...ys);
+  return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y };
+};
+
+function outilCapture() {
+  const rasterP = rasteriser(); // la photo se prend pendant qu'on dessine
+  const st = { forme: "zone", c: COULEURS[0], formes: [], en: null, raster: undefined };
+  const c = outilOuvrir("capture", `
+    <canvas id="toile" aria-label="Zone de dessin sur la capture"></canvas>
+    <div class="barre haut"><button type="button" class="btn petit" data-c="annuler">Annuler</button>
+      <span class="tt"><b>Entoure ce qu'il faut modifier</b><small id="cEtat" class="attente">Photo de l'écran…</small></span>
+      <button type="button" class="btn petit prim" data-c="ok">Terminer</button></div>
+    <div class="consigne" id="cons" hidden></div>
+    <div class="barre bas"><div class="formes" role="toolbar" aria-label="Formes">${FORMES.map(([k, t, svg]) => `<button type="button" data-forme="${k}" aria-pressed="${k === "zone"}" title="${t}">${svg}<span>${t}</span></button>`).join("")}</div>
+      <span class="sep"></span><div class="couleurs">${COULEURS.map((k, i) => `<button type="button" data-coul="${k}" aria-pressed="${i === 0}" style="background:${k}" aria-label="Couleur ${["rouge", "ambre", "bleu"][i]}"></button>`).join("")}</div>
+      <button type="button" class="ic" data-c="defaire" aria-label="Défaire" title="Défaire">↶</button></div>`, true);
+  const cv = c.querySelector("#toile"), ctx = cv.getContext("2d"), dpr = window.devicePixelRatio || 1;
+  const taille = () => { cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; redessiner(); caler(); };
+  // la consigne et la barre déplacée se posent juste au-dessus de la barre d'outils du bas
+  const caler = () => { const h = c.querySelector(".barre.bas").offsetHeight + 16; c.style.setProperty("--bas", h + "px"); const k = c.querySelector("#cons"); if (!k.dataset.deplace) k.style.bottom = h + "px"; };
+  const redessiner = () => { ctx.clearRect(0, 0, cv.width, cv.height); dessinerFormes(ctx, st.formes.concat(st.en ? [st.en] : []), dpr, true); };
+  deplacable(c.querySelector(".barre.haut"), "capture-haut"); deplacable(c.querySelector(".barre.bas"), "capture-outils"); deplacable(c.querySelector("#cons"), "capture-consigne");
+  taille(); surFenetre("resize", taille);
+  rasterP.then(r => { st.raster = r; const e = c.querySelector("#cEtat"); if (e) { e.classList.remove("attente"); e.textContent = r ? "Écran figé · dessine avec le doigt ou la souris" : "Photo impossible ici : tes annotations et les éléments repérés seront gardés"; } });
+  // la page ne défile pas pendant le dessin
+  const bloquer = e => { if (deMoiEvt(e)) e.preventDefault(); };
+  surPage("wheel", bloquer, { passive: false, capture: true }); surPage("touchmove", bloquer, { passive: false, capture: true });
+  const nZones = () => st.formes.filter(f => f.n).length;
+
+  cv.addEventListener("pointerdown", e => {
+    if (!c.querySelector("#cons").hidden) return;
+    const x = e.clientX, y = e.clientY; try { cv.setPointerCapture(e.pointerId); } catch (er) {}
+    if (st.forme === "texte") return demanderTexte(x, y);
+    c.classList.add("dessin");
+    st.en = st.forme === "zone" || st.forme === "trait" ? { t: st.forme, c: st.c, p: [[x, y]] }
+      : st.forme === "fleche" ? { t: "fleche", c: st.c, x1: x, y1: y, x2: x, y2: y }
+      : { t: st.forme, c: st.c, x, y, w: 0, h: 0, x0: x, y0: y };
+    redessiner();
+  });
+  cv.addEventListener("pointermove", e => {
+    const f = st.en; if (!f) return; const x = e.clientX, y = e.clientY;
+    if (f.p) f.p.push([x, y]); else if (f.t === "fleche") { f.x2 = x; f.y2 = y; }
+    else { f.x = Math.min(f.x0, x); f.y = Math.min(f.y0, y); f.w = Math.abs(x - f.x0); f.h = Math.abs(y - f.y0); }
+    redessiner();
+  });
+  const fin = () => {
+    c.classList.remove("dessin");
+    const f = st.en; st.en = null; if (!f) return;
+    const b = f.t === "fleche" ? { w: Math.abs(f.x2 - f.x1), h: Math.abs(f.y2 - f.y1) } : boite(f);
+    if (b.w < 10 && b.h < 10) { redessiner(); return; }
+    if (f.t === "zone") f.fini = true;
+    if (f.t === "zone" || f.t === "rect") { f.n = nZones() + 1; f.elements = elementsDansZone(boite(f)); }
+    st.formes.push(f); redessiner();
+    if (f.n) demanderConsigne(f);
+  };
+  cv.addEventListener("pointerup", fin); cv.addEventListener("pointercancel", fin);
+
+  function demanderConsigne(f) {
+    const box = c.querySelector("#cons");
+    box.innerHTML = `<small><span class="numero">${f.n}</span>Que faut-il faire dans cette zone ?</small>
+      ${f.elements.length ? `<small>Contient : ${esc(f.elements.slice(0, 3).map(e => e.t).join(" · "))}</small>` : ""}
+      <div class="rang"><input type="text" id="consIn" placeholder="Ex. : agrandir, aligner à gauche, mettre en rouge…" aria-label="Consigne pour la zone ${f.n}"></div>
+      <div class="rang"><button type="button" class="btn" data-cs="micro" aria-label="Dicter la consigne">${ICO.micro}</button><button type="button" class="btn" data-cs="passer" style="flex:1">Passer</button><button type="button" class="btn prim" data-cs="ok" style="flex:1">OK</button></div>`;
+    box.hidden = false; const inp = box.querySelector("#consIn"); setTimeout(() => inp.focus({ preventScroll: true }), 30);
+    const valider = garder => { if (garder) f.consigne = inp.value.trim(); box.hidden = true; box.innerHTML = ""; if (DICT.mode === "consigne") dicteeArreter(); };
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); valider(true); } });
+    box.onclick = e => {
+      const k = e.target.closest("[data-cs]"); if (!k) return;
+      if (k.dataset.cs === "micro") return dicterDans(inp);
+      valider(k.dataset.cs === "ok");
+    };
+  }
+  function demanderTexte(x, y) {
+    const box = c.querySelector("#cons");
+    box.innerHTML = `<small>Texte à écrire sur la capture</small><div class="rang"><input type="text" id="txtIn" placeholder="Ex. : trop petit" aria-label="Texte à écrire"><button type="button" class="btn prim" data-t="ok">OK</button></div>`;
+    box.hidden = false; const inp = box.querySelector("#txtIn"); setTimeout(() => inp.focus({ preventScroll: true }), 30);
+    const ok = () => { const t = inp.value.trim(); box.hidden = true; box.innerHTML = ""; if (t) { st.formes.push({ t: "texte", c: st.c, x, y, txt: t }); redessiner(); } };
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); ok(); } if (e.key === "Escape") { e.stopPropagation(); box.hidden = true; } });
+    box.onclick = e => { if (e.target.closest("[data-t]")) ok(); };
+  }
+
+  c.addEventListener("click", async e => {
+    const fo = e.target.closest("[data-forme]"); if (fo) { st.forme = fo.dataset.forme; c.querySelectorAll("[data-forme]").forEach(b => b.setAttribute("aria-pressed", String(b === fo))); return; }
+    const co = e.target.closest("[data-coul]"); if (co) { st.c = co.dataset.coul; c.querySelectorAll("[data-coul]").forEach(b => b.setAttribute("aria-pressed", String(b === co))); return; }
+    const a = e.target.closest("[data-c]"); if (!a) return;
+    if (a.dataset.c === "defaire") { st.formes.pop(); redessiner(); }
+    else if (a.dataset.c === "annuler") outilFermer();
+    else if (a.dataset.c === "ok") {
+      a.disabled = true; a.textContent = "Finalisation…";
+      const cons = c.querySelector("#cons"); if (!cons.hidden) { const i = cons.querySelector("#consIn"); const z = st.formes.filter(f => f.n).pop(); if (i && z) z.consigne = i.value.trim(); }
+      const raster = st.raster === undefined ? await rasterP : st.raster;
+      outilFermer(await composerCapture(raster, st.formes));
+    }
+  });
+  echapFerme(() => outilFermer());
+}
+
+// Dictée rapide dans un petit champ (consigne de zone, remplacement de texte)
+function dicterDans(inp) {
+  if (DICT.mode) { dicteeArreter(); return; }
+  const base = inp.value ? inp.value.trimEnd() + " " : "";
+  const cible = { partiel: t => { inp.value = base + t; inp.scrollLeft = inp.scrollWidth; }, final: t => { inp.value = (base + t).trim(); inp.scrollLeft = inp.scrollWidth; } };
+  // on réutilise le moteur de la dictée avec une cible ponctuelle
+  dicteeBasculer("consigne"); if (DICT.mode === "consigne") DICT.cible = cible;
+}
+
+async function composerCapture(raster, formes) {
+  const L = innerWidth, H = innerHeight;
+  const s = raster ? raster.width / L : Math.min(window.devicePixelRatio || 1, 2);
+  const cv = document.createElement("canvas"); cv.width = Math.round(L * s); cv.height = Math.round(H * s);
+  const ctx = cv.getContext("2d");
+  if (raster) ctx.drawImage(raster, 0, 0);
+  else {
+    ctx.fillStyle = "#E9EBEE"; ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.fillStyle = "#5E6670"; ctx.font = `600 ${15 * s}px system-ui, sans-serif`;
+    ctx.fillText("Photo de l'écran indisponible ici : annotations seules", 16 * s, 28 * s);
+  }
+  // zones masquées : pixellisation
+  for (const f of formes.filter(f => f.t === "flou")) {
+    const x = f.x * s, y = f.y * s, w = Math.max(1, f.w * s), h = Math.max(1, f.h * s), k = 14 * s;
+    const t = document.createElement("canvas"); t.width = Math.max(1, Math.round(w / k)); t.height = Math.max(1, Math.round(h / k));
+    t.getContext("2d").drawImage(cv, x, y, w, h, 0, 0, t.width, t.height);
+    ctx.save(); ctx.imageSmoothingEnabled = false; ctx.drawImage(t, 0, 0, t.width, t.height, x, y, w, h); ctx.restore();
+  }
+  dessinerFormes(ctx, formes.filter(f => f.t !== "flou"), s, false);
+  // image raisonnable : 1440 px de large au plus
+  let out = cv;
+  if (cv.width > 1440) { out = document.createElement("canvas"); out.width = 1440; out.height = Math.round(cv.height * 1440 / cv.width); out.getContext("2d").drawImage(cv, 0, 0, out.width, out.height); }
+  const blob = await new Promise(r => out.toBlob(r, "image/jpeg", 0.84));
+  const image = blob ? await imageMettre("cap-" + uid(), blob) : null;
+  return {
+    type: "capture", image, largeur: out.width, hauteur: out.height, ecran: L + " × " + H, photo: !!raster,
+    zones: formes.filter(f => f.n).map(f => ({ n: f.n, forme: f.t === "rect" ? "cadre" : "zone", consigne: f.consigne || "", elements: f.elements || [], boite: (b => ({ x: Math.round(b.x), y: Math.round(b.y), l: Math.round(b.w), h: Math.round(b.h) }))(boite(f)) })),
+    textes: formes.filter(f => f.t === "texte").map(f => f.txt),
+    fleches: formes.filter(f => f.t === "fleche").length,
+    masques: formes.filter(f => f.t === "flou").length
+  };
+}
+
+/* ===== 08-element.js ===== */
+/* =====================================================================
+   Outil Élément : désigner un bouton, un bloc, une image…
+   Survol (ordinateur) ou toucher (téléphone) → l'élément s'encadre.
+   « ↑ Parent » pour élargir. La note retient son sélecteur CSS, son
+   texte, sa taille, sa police, ses couleurs et le contraste.
+   ===================================================================== */
+function bloquerAppli(garderPointeur) {
+  // pendant l'outil, l'appli ne réagit pas aux clics (on ne veut pas déclencher d'action).
+  // garderPointeur (outil Texte) : la sélection native du téléphone doit rester possible,
+  // donc on laisse passer l'appui long (contextmenu) et on n'empêche que les actions de l'appli.
+  const stop = e => { if (deMoiEvt(e)) return; e.stopPropagation(); e.stopImmediatePropagation(); if (e.type === "click" || e.type === "submit" || (e.type === "contextmenu" && !garderPointeur)) e.preventDefault(); };
+  ["click", "dblclick", "contextmenu", "submit", "mousedown", "mouseup", "touchstart", "touchend", "keydown"].forEach(t => surPage(t, ev => { if (t === "keydown" && ev.key === "Escape") return; stop(ev); }, true));
+  if (!garderPointeur) ["pointerdown", "pointerup"].forEach(t => surPage(t, ev => { if (!deMoiEvt(ev)) ev.stopPropagation(); }, true));
+}
+function placerCadre(cadre, el, etiquette) {
+  if (!el) { cadre.hidden = true; return; }
+  const r = el.getBoundingClientRect();
+  Object.assign(cadre.style, { left: r.left - 2 + "px", top: r.top - 2 + "px", width: r.width + 4 + "px", height: r.height + 4 + "px" });
+  cadre.hidden = false; cadre.classList.toggle("bas", r.top < 40);
+  cadre.querySelector(".etq").textContent = etiquette || (decrireCourt(el) + " · " + Math.round(r.width) + "×" + Math.round(r.height));
+}
+
+function outilElement() {
+  const c = outilOuvrir("element", `
+    <div class="cadre" id="cadre" hidden><span class="etq"></span></div>
+    <div class="barre haut"><button type="button" class="btn petit" data-e="annuler">Annuler</button>
+      <span class="tt"><b>Touche l'élément à signaler</b><small>${estLarge() ? "Survole puis clique · ↑ pour le bloc parent · Entrée pour choisir" : "Touche un bouton, un texte, une image…"}</small></span></div>
+    <div class="barre bas" id="eChoix" hidden><span class="tt" style="min-width:0"><b id="eNom" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><small id="eSel" class="mono coupe-debut"></small></span>
+      <button type="button" class="btn petit" data-e="parent" title="Élargir au bloc qui le contient">↑ Parent</button>
+      <button type="button" class="btn petit" data-e="enfant" title="Revenir à l'élément intérieur">↓</button>
+      <button type="button" class="btn petit prim" data-e="ok">Choisir</button></div>`);
+  const cadre = c.querySelector("#cadre"); let survol = null, choisi = null; const pile = [];
+  deplacable(c.querySelector(".barre.haut"), "element-haut"); deplacable(c.querySelector("#eChoix"), "element-choix");
+  bloquerAppli(false);
+  const montrerChoix = () => {
+    placerCadre(cadre, choisi);
+    c.querySelector("#eChoix").hidden = !choisi; if (!choisi) return;
+    const r = choisi.getBoundingClientRect();
+    c.querySelector("#eNom").textContent = decrireCourt(choisi) + " · " + Math.round(r.width) + "×" + Math.round(r.height) + " px";
+    c.querySelector("#eSel").textContent = selecteur(choisi);
+    c.querySelector('[data-e="enfant"]').disabled = !pile.length;
+  };
+  let p0 = null;
+  surPage("pointermove", e => { if (deMoiEvt(e) || e.pointerType !== "mouse" || choisi) return; survol = elementSous(e.clientX, e.clientY); placerCadre(cadre, survol); }, true);
+  surPage("pointerdown", e => { if (deMoiEvt(e)) return; p0 = { x: e.clientX, y: e.clientY }; }, true);
+  surPage("pointerup", e => {
+    if (deMoiEvt(e) || !p0) return; const bouge = Math.hypot(e.clientX - p0.x, e.clientY - p0.y) > 10; p0 = null; if (bouge) return;
+    const el = elementSous(e.clientX, e.clientY); if (!el) return; choisi = el; pile.length = 0; montrerChoix();
+  }, true);
+  surFenetre("scroll", () => { if (choisi) placerCadre(cadre, choisi); }, true);
+  surFenetre("keydown", e => {
+    if (!choisi && survol && e.key === "Enter") { choisi = survol; montrerChoix(); return; }
+    if (!choisi) return;
+    if (e.key === "ArrowUp") { e.preventDefault(); c.querySelector('[data-e="parent"]').click(); }
+    if (e.key === "ArrowDown") { e.preventDefault(); c.querySelector('[data-e="enfant"]').click(); }
+    if (e.key === "Enter") { e.preventDefault(); c.querySelector('[data-e="ok"]').click(); }
+  }, true);
+  c.addEventListener("click", async e => {
+    const a = e.target.closest("[data-e]"); if (!a) return; const k = a.dataset.e;
+    if (k === "annuler") return outilFermer();
+    if (k === "parent" && choisi && choisi.parentElement && choisi.parentElement !== document.body) { pile.push(choisi); choisi = choisi.parentElement; montrerChoix(); }
+    if (k === "enfant" && pile.length) { choisi = pile.pop(); montrerChoix(); }
+    if (k === "ok" && choisi) {
+      a.disabled = true; a.textContent = "…";
+      const p = Object.assign({ type: "element" }, decrireElement(choisi));
+      cadre.hidden = true;
+      p.image = await photoElement(choisi);
+      outilFermer(p);
+    }
+  });
+  echapFerme(() => outilFermer());
+}
+async function photoElement(el) {
+  if (!htmlToImage) return null;
+  try {
+    const r = el.getBoundingClientRect(); if (r.width < 2 || r.height < 2 || r.width * r.height > 1600 * 1600) return null;
+    const blob = await Promise.race([htmlToImage.toBlob(el, { pixelRatio: Math.min(2, window.devicePixelRatio || 1), backgroundColor: fondEffectif(el), cacheBust: false, skipFonts: true }), attendre(6000).then(() => null)]);
+    return blob ? await imageMettre("el-" + uid(), blob) : null;
+  } catch (e) { return null; }
+}
+
+/* ===== 09-texte.js ===== */
+/* =====================================================================
+   Outil Texte : sélectionner un texte de l'appli et proposer
+   « remplacer par… ». La sélection est forcée même là où l'appli
+   l'interdit (user-select: none), le temps de l'outil.
+   ===================================================================== */
+function outilTexte() {
+  const c = outilOuvrir("texte", `<div id="tSurl"></div>
+    <div class="barre bas" id="tBarre"><button type="button" class="btn petit" data-x="annuler">Annuler</button>
+      <span class="tt"><b>Sélectionne le texte à changer</b><small id="tAide">${estLarge() ? "Glisse sur le texte avec la souris" : "Appui long sur un mot, puis étire la sélection"}</small></span>
+      <button type="button" class="btn petit prim" data-x="prendre" disabled>Utiliser</button></div>
+    <div class="consigne" id="tForm" hidden style="bottom:12px"></div>`);
+  const style = document.createElement("style"); style.setAttribute("data-outil-debogage", "");
+  style.textContent = "*{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:default!important}";
+  document.head.appendChild(style); (OUTIL.nettoyer = OUTIL.nettoyer || []).push(() => style.remove());
+  bloquerAppli(true);
+  deplacable(c.querySelector("#tBarre"), "texte-barre"); deplacable(c.querySelector("#tForm"), "texte-formulaire");
+  // la dernière sélection valable est gardée : toucher « Utiliser » efface souvent la sélection du téléphone
+  let sel = null, choix = null;
+  c.addEventListener("pointerdown", e => { if (e.target.closest("#tBarre button")) e.preventDefault(); });
+  c.addEventListener("mousedown", e => { if (e.target.closest("#tBarre button")) e.preventDefault(); });
+  const lire = () => {
+    const s = document.getSelection(); if (!s || s.isCollapsed || !s.rangeCount) return null;
+    const t = s.toString().replace(/\s+/g, " ").trim(); if (!t) return null;
+    const r = s.getRangeAt(0); let el = r.commonAncestorContainer; if (el.nodeType !== 1) el = el.parentElement;
+    return { texte: t, el, rects: [...r.getClientRects()].slice(0, 20) };
+  };
+  surPage("selectionchange", () => {
+    if (choix) return;
+    const lu = lire(); if (!lu) return;
+    sel = lu; const b = c.querySelector('[data-x="prendre"]'); if (b) b.disabled = !sel;
+    c.querySelector("#tAide").textContent = sel ? "« " + tronquer(sel.texte, 60) + " »" : (estLarge() ? "Glisse sur le texte avec la souris" : "Appui long sur un mot, puis étire la sélection");
+  });
+  const formulaire = () => {
+    const box = c.querySelector("#tForm"), s = choix = sel;
+    c.querySelector("#tBarre").hidden = true;
+    c.querySelector("#tSurl").innerHTML = s.rects.map(r => `<div class="surligne" style="left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px"></div>`).join("");
+    try { document.getSelection().removeAllRanges(); } catch (e) {}
+    box.innerHTML = `<small>Texte actuel</small><b>« ${esc(tronquer(s.texte, 200))} »</b>
+      <small>Remplacer par (laisser vide pour signaler seulement)</small>
+      <div class="rang"><input type="text" id="tNouv" value="${esc(s.texte.length < 160 ? s.texte : "")}" aria-label="Nouveau texte"><button type="button" class="btn" data-x="micro" aria-label="Dicter">${ICO.micro}</button></div>
+      <div class="rang"><button type="button" class="btn" data-x="refaire" style="flex:1">Autre sélection</button><button type="button" class="btn prim" data-x="ok" style="flex:1.4">Ajouter à la note</button></div>`;
+    box.hidden = false; const inp = box.querySelector("#tNouv"); setTimeout(() => { inp.focus({ preventScroll: true }); inp.select(); }, 30);
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); box.querySelector('[data-x="ok"]').click(); } });
+  };
+  c.addEventListener("click", e => {
+    const a = e.target.closest("[data-x]"); if (!a) return; const k = a.dataset.x;
+    if (k === "annuler") return outilFermer();
+    if (k === "prendre" && sel) return formulaire();
+    if (k === "micro") return dicterDans(c.querySelector("#tNouv"));
+    if (k === "refaire") { choix = sel = null; c.querySelector("#tForm").hidden = true; c.querySelector("#tBarre").hidden = false; c.querySelector("#tSurl").innerHTML = ""; const b = c.querySelector('[data-x="prendre"]'); b.hidden = false; b.disabled = true; c.querySelector("#tAide").textContent = estLarge() ? "Glisse sur le texte avec la souris" : "Appui long sur un mot, puis étire la sélection"; return; }
+    if (k === "ok" && choix) {
+      const sel = choix;
+      if (DICT.mode === "consigne") dicteeArreter();
+      const nouv = c.querySelector("#tNouv").value.trim();
+      outilFermer({ type: "texte", texte: sel.texte, remplacement: nouv && nouv !== sel.texte ? nouv : "", element: selecteur(sel.el), dans: decrireCourt(sel.el) });
+    }
+  });
+  echapFerme(() => outilFermer());
+}
+
+/* ===== 10-mesure.js ===== */
+/* =====================================================================
+   Outil Mesure
+   - Règle : glisser pour mesurer une distance en pixels ;
+   - Écart : toucher deux éléments → espace entre eux et décalages d'alignement ;
+   - Couleur : toucher un élément → couleur du texte, du fond, contraste, police ;
+   - Grille : quadrillage d'alignement (4, 8, 16 ou 24 px), gardé pendant les mesures.
+   ===================================================================== */
+function outilMesure() {
+  const st = { mode: "regle", grille: local.lire("grille", 0), a: null, b: null, p1: null, p2: null, res: null };
+  const c = outilOuvrir("mesure", `
+    <canvas id="mToile"></canvas>
+    <div class="barre haut"><button type="button" class="btn petit" data-m="fin">Fermer</button>
+      <div class="formes" role="tablist">${[["regle", "Règle"], ["ecart", "Écart"], ["couleur", "Couleur"]].map(([k, t]) => `<button type="button" role="tab" data-mode="${k}" aria-pressed="${k === "regle"}"><span style="font-size:13px">${t}</span></button>`).join("")}
+      <button type="button" data-m="grille" aria-pressed="false" title="Grille d'alignement"><span style="font-size:13px" id="mGr">Grille</span></button></div></div>
+    <div class="consigne" id="mRes" style="bottom:12px"></div>`, true);
+  const cv = c.querySelector("#mToile"), ctx = cv.getContext("2d"), dpr = window.devicePixelRatio || 1;
+  const taille = () => { cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; dessiner(); };
+  const aide = { regle: "Glisse d'un point à un autre pour mesurer.", ecart: "Touche un premier élément, puis un second.", couleur: "Touche un texte ou un bloc pour lire ses couleurs." };
+  const res = c.querySelector("#mRes");
+  deplacable(c.querySelector(".barre.haut"), "mesure-haut"); deplacable(res, "mesure-resultat");
+  const afficher = (html, piece) => {
+    st.res = piece || null;
+    res.innerHTML = `<div class="resultat">${html}</div>${piece ? `<div class="rang"><button type="button" class="btn prim" data-m="ajouter" style="flex:1">Ajouter à la note</button></div>` : ""}`;
+  };
+  const boiteEl = el => { const r = el.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; };
+  function dessiner() {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, innerWidth, innerHeight);
+    if (st.grille) {
+      ctx.strokeStyle = "rgba(255,0,140,.22)"; ctx.lineWidth = 1; ctx.beginPath();
+      for (let x = 0.5; x < innerWidth; x += st.grille) { ctx.moveTo(x, 0); ctx.lineTo(x, innerHeight); }
+      for (let y = 0.5; y < innerHeight; y += st.grille) { ctx.moveTo(0, y); ctx.lineTo(innerWidth, y); }
+      ctx.stroke(); ctx.strokeStyle = "rgba(255,0,140,.5)"; ctx.beginPath(); ctx.moveTo(innerWidth / 2, 0); ctx.lineTo(innerWidth / 2, innerHeight); ctx.stroke();
+    }
+    const cadre = (b, coul, lettre) => { ctx.strokeStyle = coul; ctx.lineWidth = 2; ctx.fillStyle = coul + "22"; ctx.fillRect(b.x, b.y, b.w, b.h); ctx.strokeRect(b.x, b.y, b.w, b.h); if (lettre) { ctx.fillStyle = coul; ctx.fillRect(b.x, b.y - 18, 18, 18); ctx.fillStyle = "#fff"; ctx.font = "700 12px system-ui"; ctx.fillText(lettre, b.x + 5, b.y - 5); } };
+    const etiquette = (x, y, t) => { ctx.font = "600 12.5px ui-monospace, Menlo, monospace"; const w = ctx.measureText(t).width + 12; x = borne(x - w / 2, 4, innerWidth - w - 4); y = borne(y, 22, innerHeight - 4); ctx.fillStyle = "#1D2024"; ctx.fillRect(x, y - 18, w, 22); ctx.fillStyle = "#FFB224"; ctx.fillText(t, x + 6, y - 3); };
+    if (st.mode === "regle" && st.p1 && st.p2) {
+      ctx.strokeStyle = "#FFB224"; ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.moveTo(st.p1.x, st.p1.y); ctx.lineTo(st.p2.x, st.p2.y); ctx.stroke(); ctx.setLineDash([]);
+      [st.p1, st.p2].forEach(p => { ctx.fillStyle = "#FFB224"; ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, 7); ctx.fill(); });
+      const dx = Math.abs(st.p2.x - st.p1.x), dy = Math.abs(st.p2.y - st.p1.y);
+      etiquette((st.p1.x + st.p2.x) / 2, (st.p1.y + st.p2.y) / 2 - 8, fmtNb(Math.hypot(dx, dy)) + " px");
+    }
+    if (st.mode === "ecart") {
+      if (st.a) cadre(boiteEl(st.a), "#2F80ED", "A");
+      if (st.b) {
+        cadre(boiteEl(st.b), "#FF3B30", "B");
+        const A = boiteEl(st.a), B = boiteEl(st.b);
+        ctx.strokeStyle = "#FFB224"; ctx.lineWidth = 2;
+        const gx = B.x > A.x + A.w ? [A.x + A.w, B.x] : A.x > B.x + B.w ? [B.x + B.w, A.x] : null;
+        const gy = B.y > A.y + A.h ? [A.y + A.h, B.y] : A.y > B.y + B.h ? [B.y + B.h, A.y] : null;
+        if (gx) { const y = Math.max(A.y, B.y) + 10; ctx.beginPath(); ctx.moveTo(gx[0], y); ctx.lineTo(gx[1], y); ctx.stroke(); etiquette((gx[0] + gx[1]) / 2, y - 6, Math.round(gx[1] - gx[0]) + " px"); }
+        if (gy) { const x = Math.max(A.x, B.x) + 10; ctx.beginPath(); ctx.moveTo(x, gy[0]); ctx.lineTo(x, gy[1]); ctx.stroke(); etiquette(x + 30, (gy[0] + gy[1]) / 2 + 6, Math.round(gy[1] - gy[0]) + " px"); }
+      }
+    }
+    if (st.mode === "couleur" && st.a) cadre(boiteEl(st.a), "#FFB224");
+  }
+  taille(); surFenetre("resize", taille);
+  afficher(`<small>${aide.regle}</small>`);
+  if (st.grille) c.querySelector("#mGr").textContent = "Grille " + st.grille;
+
+  cv.addEventListener("pointerdown", e => {
+    const x = e.clientX, y = e.clientY;
+    if (st.mode === "regle") { st.p1 = { x, y }; st.p2 = { x, y }; st.glisse = true; try { cv.setPointerCapture(e.pointerId); } catch (er) {} dessiner(); }
+  });
+  cv.addEventListener("pointermove", e => { if (st.mode === "regle" && st.glisse) { st.p2 = { x: e.clientX, y: e.clientY }; if (e.shiftKey) { if (Math.abs(st.p2.x - st.p1.x) > Math.abs(st.p2.y - st.p1.y)) st.p2.y = st.p1.y; else st.p2.x = st.p1.x; } dessiner(); } });
+  cv.addEventListener("pointerup", e => {
+    const x = e.clientX, y = e.clientY;
+    if (st.mode === "regle") {
+      st.glisse = false; const dx = Math.round(Math.abs(st.p2.x - st.p1.x)), dy = Math.round(Math.abs(st.p2.y - st.p1.y));
+      if (dx + dy < 3) { afficher(`<small>${aide.regle}</small>`); return; }
+      const d = fmtNb(Math.hypot(dx, dy));
+      const de = decrireCourt(elementSous(st.p1.x, st.p1.y)), a = decrireCourt(elementSous(st.p2.x, st.p2.y));
+      afficher(`<b>${d} px</b><small>horizontal ${dx} px · vertical ${dy} px</small><small>de ${esc(de)} à ${esc(a)}</small>`,
+        { type: "mesure", genre: "distance", resume: d + " px (Δx " + dx + ", Δy " + dy + ")", details: "De " + de + " à " + a });
+    } else if (st.mode === "ecart") {
+      const el = elementSous(x, y); if (!el) return;
+      if (!st.a || st.b) { st.a = el; st.b = null; afficher(`<small>A : ${esc(decrireCourt(el))}. Touche maintenant le second élément.</small>`); }
+      else {
+        st.b = el; const A = boiteEl(st.a), B = boiteEl(st.b);
+        const ex = Math.round(Math.max(B.x - (A.x + A.w), A.x - (B.x + B.w), 0)), ey = Math.round(Math.max(B.y - (A.y + A.h), A.y - (B.y + B.h), 0));
+        const dg = Math.round(B.x - A.x), dh = Math.round(B.y - A.y), dc = Math.round((B.x + B.w / 2) - (A.x + A.w / 2)), dd = Math.round((B.x + B.w) - (A.x + A.w));
+        const lignes = [ex ? "Espace horizontal : " + ex + " px" : "", ey ? "Espace vertical : " + ey + " px" : "", !ex && !ey ? "Les deux éléments se touchent ou se chevauchent" : "",
+          "Bords gauches décalés de " + dg + " px" + (dg === 0 ? " (alignés)" : ""), "Bords hauts décalés de " + dh + " px" + (dh === 0 ? " (alignés)" : ""),
+          "Centres décalés de " + dc + " px horizontalement" + (dc === 0 ? " (centrés)" : ""), "Bords droits décalés de " + dd + " px" + (dd === 0 ? " (alignés)" : "")].filter(Boolean);
+        const tA = decrireCourt(st.a), tB = decrireCourt(st.b);
+        afficher(`<small>A : ${esc(tA)}<br>B : ${esc(tB)}</small>${lignes.map(l => `<span>${esc(l)}</span>`).join("")}`,
+          { type: "mesure", genre: "ecart", resume: (ex || ey ? "écart " + [ex ? ex + " px horizontal" : "", ey ? ey + " px vertical" : ""].filter(Boolean).join(", ") : "éléments collés") + " entre A et B",
+            details: "A = " + tA + " (" + selecteur(st.a) + ") ; B = " + tB + " (" + selecteur(st.b) + ") ; " + lignes.join(" ; ") });
+      }
+      dessiner();
+    } else if (st.mode === "couleur") {
+      const el = elementSous(x, y); if (!el) return; st.a = el; dessiner();
+      const cs = getComputedStyle(el), fond = fondEffectif(el), ct = contraste(cs.color, fond);
+      const ok = ct >= 4.5, verdict = ct ? fmtNb(ct) + ":1 " + (ok ? "✓ lisible (AA)" : ct >= 3 ? "⚠ juste pour du gros texte" : "✗ insuffisant") : "";
+      afficher(`<small>${esc(decrireCourt(el))}</small>
+        <span class="nuance"><i style="background:${esc(cs.color)}"></i>Texte <b class="mono">${esc(versHex(cs.color))}</b></span>
+        <span class="nuance"><i style="background:${esc(fond)}"></i>Fond <b class="mono">${esc(versHex(fond))}</b></span>
+        <span>Contraste <b>${esc(verdict)}</b></span>
+        <small class="mono">${esc(cs.fontSize + " / " + cs.lineHeight + " · " + cs.fontWeight + " · " + cs.fontFamily.split(",")[0])}</small>`,
+        { type: "mesure", genre: "couleur", resume: "texte " + versHex(cs.color) + " sur " + versHex(fond) + (ct ? ", contraste " + fmtNb(ct) + ":1" : ""),
+          details: decrireCourt(el) + " (" + selecteur(el) + ") · police " + cs.fontSize + " " + cs.fontWeight + " " + cs.fontFamily.split(",")[0] + (ct && !ok ? " · contraste sous 4,5:1" : "") });
+    }
+  });
+  c.addEventListener("click", e => {
+    const md = e.target.closest("[data-mode]");
+    if (md) { st.mode = md.dataset.mode; st.a = st.b = st.p1 = st.p2 = null; c.querySelectorAll("[data-mode]").forEach(b => b.setAttribute("aria-pressed", String(b === md))); afficher(`<small>${aide[st.mode]}</small>`); dessiner(); return; }
+    const a = e.target.closest("[data-m]"); if (!a) return;
+    if (a.dataset.m === "fin") return outilFermer();
+    if (a.dataset.m === "grille") { const pas = [0, 4, 8, 16, 24]; st.grille = pas[(pas.indexOf(st.grille) + 1) % pas.length]; local.ecrire("grille", st.grille); a.setAttribute("aria-pressed", String(!!st.grille)); c.querySelector("#mGr").textContent = st.grille ? "Grille " + st.grille : "Grille"; dessiner(); }
+    if (a.dataset.m === "ajouter" && st.res) outilFermer(st.res);
+  });
+  echapFerme(() => outilFermer());
+}
+
+/* ===== 11-export.js ===== */
+/* =====================================================================
+   Export : texte « prêt pour Claude », ZIP (texte + JSON + captures),
+   JSON pour le tableau de bord multi-projets
+   ===================================================================== */
+const FORMAT = "outil-debogage";
+const nomCapture = ref => "captures/" + String(ref.cle).replace(/[^a-z0-9_-]/gi, "_") + ".jpg";
+
+function promptClaude(notes, opts) {
+  opts = opts || {};
+  // ordre de priorité choisi dans la liste (la note du haut d'abord)
+  const liste = notes.slice().sort((a, b) => (b.ordre || Date.parse(b.at) || 0) - (a.ordre || Date.parse(a.at) || 0));
+  const L = [];
+  L.push(`# Notes de débogage — ${CFG.projet || "projet"}${CFG.version ? " v" + CFG.version : ""}`);
+  L.push(`${liste.length} note${liste.length > 1 ? "s" : ""} · exportées le ${new Date().toLocaleString("fr-FR")} · outil-debogage ${VERSION_OUTIL}`);
+  L.push("");
+  L.push("Corrige chaque point ci-dessous dans le code de l'appli, dans l'ordre (le premier est le plus prioritaire). Les sélecteurs CSS indiquent les éléments concernés ; les numéros ①②… renvoient aux zones entourées sur les captures" + (opts.avecImages ? " (dossier captures/)" : "") + ". Quand un point est corrigé, dis-moi dans quelle version, pour que je le marque « corrigé ».");
+  const parEcran = new Map();
+  liste.forEach(n => { const k = n.ecran || "Écran inconnu"; if (!parEcran.has(k)) parEcran.set(k, []); parEcran.get(k).push(n); });
+  let i = 0;
+  for (const [ecran, ns] of parEcran) {
+    L.push("", `## Écran : ${ecran}`);
+    for (const n of ns) {
+      i++;
+      const titre = String(n.texte || "").split("\n")[0];
+      L.push("", `### ${i}. ${tronquer(titre, 110)}`);
+      const meta = [fmtQuand(n.at), n.version ? "v" + n.version : "", n.via === "voix" ? "dictée" : "", n.valide ? "corrigée" + (n.corrigeeEn ? " en v" + n.corrigeeEn : "") : "",
+        (n.rouvertes || []).length ? "rouverte " + n.rouvertes.length + " fois" + (n.rouvertes[n.rouvertes.length - 1].corrigeeEn ? " (avait été corrigée en v" + n.rouvertes[n.rouvertes.length - 1].corrigeeEn + ")" : "") : ""].filter(Boolean).join(" · ");
+      L.push(`_${meta}_`);
+      if (String(n.texte || "").includes("\n") || titre.length > 110) L.push("", n.texte);
+      for (const p of n.pieces || []) {
+        if (p.type === "capture") {
+          L.push(`- **Capture** ${p.image ? "`" + nomCapture(p.image) + "`" : ""}${p.photo === false ? " (annotations seules, sans photo de l'écran)" : ""}`);
+          for (const z of p.zones || []) L.push(`  - Zone ${NUM[z.n - 1] || z.n} : ${z.consigne ? "« " + z.consigne + " »" : "(pas de consigne)"}${z.elements && z.elements.length ? " — contient " + z.elements.map(e => e.t + " `" + e.s + "`").join(", ") : ""}`);
+          if (p.textes && p.textes.length) L.push(`  - Textes écrits sur la capture : ${p.textes.map(t => "« " + t + " »").join(", ")}`);
+        } else if (p.type === "element") {
+          L.push(`- **Élément** ${p.balise}${p.texte ? " « " + p.texte + " »" : ""} — \`${p.selecteur}\` — ${p.taille} — police ${p.styles.police}, ${p.styles.couleur} sur ${p.styles.fond}${p.styles.contraste ? ", contraste " + p.styles.contraste : ""}${p.styles.retraits && p.styles.retraits !== "0px" ? ", padding " + p.styles.retraits : ""}${p.styles.marges && p.styles.marges !== "0px" ? ", margin " + p.styles.marges : ""}`);
+        } else if (p.type === "texte") {
+          L.push(p.remplacement ? `- **Texte à remplacer** : « ${p.texte} » → « ${p.remplacement} » (dans \`${p.element}\`)` : `- **Texte signalé** : « ${p.texte} » (dans \`${p.element}\`)`);
+        } else if (p.type === "mesure") {
+          L.push(`- **Mesure** (${p.genre}) : ${p.resume}${p.details ? " — " + p.details : ""}`);
+        }
+      }
+      const c = n.contexte;
+      if (c) {
+        if (c.erreurs && c.erreurs.length) { L.push(`- **Erreurs JavaScript juste avant** :`); c.erreurs.slice(-5).forEach(e => L.push(`  - ${e.type} : ${e.message}${e.source ? " (" + e.source + ")" : ""}${e.pile ? "\n    ```\n    " + e.pile.split("\n").slice(0, 4).join("\n    ") + "\n    ```" : ""}`)); }
+        if (c.parcours && c.parcours.length) L.push(`- **Parcours** : ${c.parcours.slice(-8).map(x => x.type === "écran" ? "→ " + x.ecran : x.type + " " + x.cible).join(" · ")}`);
+        if (c.appareil) { const a = c.appareil; L.push(`- **Appareil** : ${[a.systeme, a.navigateur + (a.webview ? " (appli)" : ""), a.ecran + " ×" + a.densite, a.orientation, "thème " + a.theme, a.zoom && a.zoom !== "100 %" ? "zoom " + a.zoom : ""].filter(Boolean).join(", ")}`); }
+        if (c.etat) L.push(`- **État de l'appli** : \`${c.etat}\``);
+      }
+    }
+  }
+  return L.join("\n");
+}
+
+/* ---------- ZIP minimal (sans compression), lisible partout ---------- */
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8) { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+async function creerZip(fichiers) {
+  const enc = new TextEncoder(), parts = [], central = []; let offset = 0;
+  const d = new Date(), heure = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), jour = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  for (const f of fichiers) {
+    const nom = enc.encode(f.nom), data = f.data instanceof Uint8Array ? f.data : typeof f.data === "string" ? enc.encode(f.data) : new Uint8Array(await f.data.arrayBuffer());
+    const crc = crc32(data), h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+    h.setUint16(10, heure, true); h.setUint16(12, jour, true); h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true);
+    h.setUint16(26, nom.length, true); h.setUint16(28, 0, true);
+    parts.push(new Uint8Array(h.buffer), nom, data);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+    c.setUint16(12, heure, true); c.setUint16(14, jour, true); c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true);
+    c.setUint16(28, nom.length, true); c.setUint32(42, offset, true);
+    central.push(new Uint8Array(c.buffer), nom);
+    offset += 30 + nom.length + data.length;
+  }
+  const tailleCentral = central.reduce((s, x) => s + x.length, 0), fin = new DataView(new ArrayBuffer(22));
+  fin.setUint32(0, 0x06054b50, true); fin.setUint16(8, fichiers.length, true); fin.setUint16(10, fichiers.length, true); fin.setUint32(12, tailleCentral, true); fin.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, new Uint8Array(fin.buffer)], { type: "application/zip" });
+}
+
+const horodatage = () => { const d = new Date(), p = n => String(n).padStart(2, "0"); return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + "_" + p(d.getHours()) + "h" + p(d.getMinutes()); };
+const nomBase = () => "debogage_" + (CFG.projet || "projet").replace(/[^a-z0-9_-]+/gi, "-") + "_" + horodatage();
+function paquet(notes) { return { format: FORMAT, formatVersion: 1, outil: VERSION_OUTIL, projet: CFG.projet || "", versionApp: CFG.version || "", exporteLe: iso(), notes: notes.map(sansId) }; }
+const blobVersDataUrl = b => new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.onerror = () => r(""); f.readAsDataURL(b); });
+
+async function exporterZip() {
+  toast("Préparation du ZIP…");
+  const notes = ST.notes, fichiers = [], vus = new Set();
+  fichiers.push({ nom: "notes_a_traiter.md", data: promptClaude(notes.filter(n => !n.valide), { avecImages: true }) });
+  fichiers.push({ nom: "toutes_les_notes.md", data: promptClaude(notes, { avecImages: true }) });
+  fichiers.push({ nom: "notes.json", data: JSON.stringify(paquet(notes), null, 1) });
+  for (const n of notes) for (const p of n.pieces || []) {
+    if (!p.image || vus.has(p.image.cle)) continue; vus.add(p.image.cle);
+    const b = await imageBlob(p.image); if (b) fichiers.push({ nom: nomCapture(p.image), data: b });
+  }
+  const ok = await telecharger(nomBase() + ".zip", await creerZip(fichiers));
+  if (ok !== false) toast("ZIP prêt : " + notes.length + " note(s), " + (fichiers.length - 3) + " image(s).");
+}
+async function exporterJson() {
+  toast("Préparation de l'export…");
+  const p = paquet(ST.notes);
+  for (const n of p.notes) for (const pc of n.pieces || []) {
+    if (!pc.image) continue; const b = await imageBlob(pc.image); if (b) pc.image.data = await blobVersDataUrl(b);
+  }
+  const ok = await telecharger(nomBase() + ".json", new Blob([JSON.stringify(p)], { type: "application/json" }));
+  if (ok !== false) toast("Export prêt : à importer dans le tableau de bord.");
+}
+
+/* ===== 12-api.js ===== */
+/* =====================================================================
+   API publique : window.Debogage
+   ===================================================================== */
+let demarre = false;
+async function init(options) {
+  if (demarre) { Object.assign(CFG, options || {}); rendre(); return API; }
+  demarre = true;
+  Object.assign(CFG, options || {});
+  if (!CFG.projet) CFG.projet = (document.title || location.hostname || "projet").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+  Object.assign(PREFS, local.lire("prefs", {}) || {});
+  chargerInterface();
+  if (PREFS.bulle == null) PREFS.bulle = !!CFG.bulle;
+  if (/[?&#]debug(=1|ogage)?\b/.test(location.search + location.hash)) PREFS.bulle = true;
+  installerContexte();
+  const go = () => {
+    construireUI();
+    ST.abonnes.add(() => rendre());
+    rendre();
+    stockageInit();
+    dicteePreparer();
+    addEventListener("keydown", e => {
+      if (CFG.raccourci && (e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "D" || e.key === "d")) {
+        e.preventDefault(); if (!PREFS.bulle) afficherBulle(true);
+        if (q("#pnl").hidden) ouvrirPanneau("note"); else fermerPanneau();
+      } else if (e.key === "Escape" && IF.fenetre.echap && !OUTIL.actif && !q("#pnl").hidden && q("#menu3").hidden) { fermerPanneau(); }
+    }, true);
+    addEventListener("online", viderAttente);
+  };
+  if (document.body) go(); else document.addEventListener("DOMContentLoaded", go);
+  return API;
+}
+
+const API = {
+  __charge: true,
+  version: VERSION_OUTIL,
+  init,
+  /** Afficher / masquer la bulle (à relier au menu de l'appli). */
+  afficher: () => afficherBulle(true),
+  masquer: () => { fermerPanneau(); afficherBulle(false); },
+  basculer: () => afficherBulle(!PREFS.bulle),
+  estAffichee: () => !!PREFS.bulle,
+  /** Ouvrir la fenêtre : "note" | "liste" | "reglages" | "interface". */
+  /** Remettre l'interface d'origine (apparence, disposition des outils, éléments masqués). */
+  reinitialiserInterface: () => { Object.assign(IF, INTERFACE_DEFAUT()); sauverInterface(); rendre(); },
+  ouvrir: vue => { if (!PREFS.bulle) afficherBulle(true); ouvrirPanneau(vue || "note"); },
+  fermer: () => fermerPanneau(),
+  /** Ajouter une note par programme (ex. depuis un bouton « Signaler » de l'appli). */
+  noter: (texte, pieces) => creerNote(texte, "appli", pieces || []),
+  /** Notes (copie) et abonnement aux changements. */
+  notes: () => JSON.parse(JSON.stringify(ST.notes)),
+  aTraiter: () => aTraiter().length,
+  surChangement: f => { ST.abonnes.add(f); return () => ST.abonnes.delete(f); },
+  /** Exports. */
+  texteClaude: (tout) => promptClaude(tout ? ST.notes : aTraiter()),
+  exporterZip, exporterJson,
+  /** Changer la version de l'appli (la version de correction des notes validées). */
+  definirVersion: v => { CFG.version = String(v || ""); rendre(); }
+};
+window.Debogage = API;
+// Démarrage automatique : <script src="debogage.js" data-projet="mon-appli" data-version="1.2"></script>
+(() => {
+  const s = document.currentScript;
+  if (s && s.dataset && (s.dataset.projet || s.hasAttribute("data-auto"))) init({ projet: s.dataset.projet || "", version: s.dataset.version || "", bulle: s.dataset.bulle !== "non" });
+})();
+})();
