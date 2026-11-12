@@ -224,7 +224,8 @@ function rendreInterface() {
       <small>Chaque fenêtre (Capture, Élément, Texte, Mesure) se déplace par sa poignée ⠿ ou par son fond, et retient sa place. Double-toucher la poignée la remet à sa place d'origine.</small>
       <button type="button" class="btn" data-i="fenetres"${Object.keys(FEN.lire()).length ? "" : " disabled"}>Remettre toutes les fenêtres à leur place</button>
     </div>
-    <button type="button" class="btn" data-i="reinit">Rétablir l'interface d'origine</button>`;
+    <button type="button" class="btn" data-i="reinit">Rétablir l'interface d'origine</button>
+    ${blocVersion()}`;
   v.scrollTop = st;
   v.onclick = e => {
     const b = e.target.closest("[data-i]"); if (!b) return; const k = b.dataset.i;

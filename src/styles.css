@@ -312,3 +312,10 @@ textarea:focus, input[type=text]:focus { border-color: var(--acc); outline: none
 .verif-tete .verif-compte { margin-left: auto; font-size: 13px; color: var(--doux); font-variant-numeric: tabular-nums; }
 textarea#saisie { height: 112px; min-height: 112px; max-height: 40vh; overflow-y: auto; resize: none; }
 .edition textarea { height: 140px; max-height: 40vh; overflow-y: auto; resize: none; }
+
+/* Versions */
+.versions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.versions > div { background: var(--fond2); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; min-width: 0; }
+.versions small { font-size: 12px; }
+.versions b { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.versions .mono { font-size: 15px !important; font-weight: 700; color: var(--acc); }

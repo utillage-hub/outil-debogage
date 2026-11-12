@@ -43,7 +43,7 @@
 <header>
   <div class="bandeau">Appli de démonstration · données fictives</div>
   <h1>Planning de l'équipe</h1>
-  <p class="sous">Bonjour Camille, voici les tâches de la semaine.</p>
+  <p class="sous">Voici les tâches de la semaine, par service.</p>
   <nav role="tablist">
     <button role="tab" aria-selected="true" data-o="taches">Tâches</button>
     <button role="tab" aria-selected="false" data-o="equipe">Équipe</button>
@@ -73,7 +73,7 @@
 
 <script>
   // Données inventées pour la démonstration
-  const taches = [["Camille", "Préparer la réunion du lundi", "Lun. 9 h", "En cours"], ["Noé", "Ranger la salle de réunion", "Lun. 14 h", "À faire"], ["Inès", "Commander des stylos", "Mar.", "Fait"], ["Malo", "Mettre à jour le planning", "Mar.", "À faire"], ["Lina", "Relire la note de service", "Mer.", "En cours"], ["Sacha", "Arroser les plantes du bureau", "Jeu.", "Fait"], ["Jules", "Tester la nouvelle imprimante", "Jeu.", "À faire"], ["Rose", "Organiser le pique-nique", "Ven.", "À faire"]];
+  const taches = [["Accueil", "Préparer la réunion du lundi", "Lun. 9 h", "En cours"], ["Logistique", "Ranger la salle de réunion", "Lun. 14 h", "À faire"], ["Achats", "Commander des stylos", "Mar.", "Fait"], ["Planning", "Mettre à jour le planning", "Mar.", "À faire"], ["Communication", "Relire la note de service", "Mer.", "En cours"], ["Entretien", "Arroser les plantes du bureau", "Jeu.", "Fait"], ["Informatique", "Tester la nouvelle imprimante", "Jeu.", "À faire"], ["Événements", "Organiser le pique-nique", "Ven.", "À faire"]];
   const html = taches.concat(taches).map(([n, t, q, s]) => `<div class="ligne"><span class="av">${n[0]}</span><span class="t">${t}<small>${n} · ${q}</small></span><span class="puce${s === "Fait" ? " ok" : ""}">${s}</span></div>`).join("");
   document.getElementById("liste").insertAdjacentHTML("beforeend", html);
   let onglet = "taches";

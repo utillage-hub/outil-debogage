@@ -160,7 +160,7 @@ function changerVue(v) {
   UI.vue = v;
   RACINE.querySelectorAll(".onglets [data-vue]").forEach(b => b.setAttribute("aria-selected", String(b.dataset.vue === v)));
   ["note", "liste", "reglages", "interface"].forEach(k => { q("#v-" + k).hidden = k !== v; });
-  q("#titre").textContent = { note: "Nouvelle note", liste: "Notes", reglages: "Export et réglages", interface: "Interface" }[v];
+  q("#titre").textContent = { note: "Nouvelle note", liste: "Notes", reglages: "Réglages", interface: "Interface" }[v];
   if (v !== "liste") UI.verif = false;
   rendre();
 }
@@ -446,12 +446,19 @@ async function actionVerif(k) {
 }
 
 /* ---------- Export et réglages ---------- */
+// Versions toujours visibles : appli testée (version de correction des notes) et outil
+function blocVersion() {
+  return `<div class="versions" aria-label="Versions">
+    <div><small>Appli testée</small><b>${esc(CFG.projet || "projet")}</b><span class="mono">${CFG.version ? "v" + esc(CFG.version) : "version non indiquée"}</span></div>
+    <div><small>Outil de débogage</small><b>Débogage</b><span class="mono">v${VERSION_OUTIL}</span></div>
+  </div>`;
+}
 function rendreReglages() {
   const v = q("#v-reglages"), todo = aTraiter().length, attente = (local.lire("attente", []) || []).length;
   const ok = ST.notes.length - todo;
-  v.innerHTML = `
+  v.innerHTML = `${blocVersion()}
     <div class="sec"><h3>Transmettre à Claude</h3>
-      <button type="button" class="btn prim" data-r="copier"${todo ? "" : " disabled"}>Copier les ${todo} note${todo > 1 ? "s" : ""} à traiter</button>
+      <button type="button" class="btn prim" data-r="copier"${todo ? "" : " disabled"}>${todo > 1 ? "Copier les " + todo + " notes à traiter" : "Copier la note à traiter"}</button>
       <div class="grille2">
         <button type="button" class="btn" data-r="zip"${ST.notes.length ? "" : " disabled"}>⬇ ZIP avec captures</button>
         <button type="button" class="btn" data-r="json"${ST.notes.length ? "" : " disabled"}>⬇ Pour le tableau de bord</button>

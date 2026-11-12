@@ -98,7 +98,7 @@ def scenario(nav, nom, ctx_opts):
     verif(S('[data-x="prendre"]').is_enabled(), "…mais la dernière sélection reste utilisable")
     page.screenshot(path=str(SORTIE / f"{nom}_07a_texte_selection.png"))
     tap(S('[data-x="prendre"]')); page.wait_for_timeout(200)
-    S("#tNouv").fill("Bonjour Camille !")
+    S("#tNouv").fill("Tâches de la semaine")
     page.screenshot(path=str(SORTIE / f"{nom}_07_texte.png"))
     tap(S('[data-x="ok"]')); page.wait_for_timeout(300)
 
@@ -170,10 +170,11 @@ def scenario(nav, nom, ctx_opts):
     texte = page.evaluate("Debogage.texteClaude(true)")
     (SORTIE / f"{nom}_prompt.md").write_text(texte, encoding="utf-8")
     verif("Zone ①" in texte and "Mettre ce bouton en évidence" in texte, "le texte pour Claude contient la zone et sa consigne")
-    verif("→ « Bonjour Camille ! »" in texte, "le texte pour Claude contient le remplacement de texte")
+    verif("→ « Tâches de la semaine »" in texte, "le texte pour Claude contient le remplacement de texte")
     with page.expect_download() as dl:
         page.evaluate("Debogage.ouvrir('reglages')"); page.wait_for_timeout(300)
         page.screenshot(path=str(SORTIE / f"{nom}_12_reglages.png"))
+        verif("v0.3" in S(".versions").inner_text() and "v1.0.0" in S(".versions").inner_text(), "les versions (appli et outil) sont visibles en haut des réglages")
         tap(S('[data-r="zip"]'))
     dl.value.save_as(str(SORTIE / f"{nom}_export.zip"))
     z = zipfile.ZipFile(io.BytesIO(open(dl.value.path(), "rb").read()))
